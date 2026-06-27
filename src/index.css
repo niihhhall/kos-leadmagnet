@@ -9,6 +9,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 :root {
@@ -209,9 +210,11 @@ p {
   overflow: hidden;
 }
 
-.card:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: var(--shadow-offset-hover) var(--shadow-offset-hover) 0px 0px var(--border-color);
+@media (hover: hover) {
+  .card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-offset-hover) var(--shadow-offset-hover) 0px 0px var(--border-color);
+  }
 }
 
 /* Glassmorphic Panel Component - Industrial Luxe */
@@ -246,10 +249,12 @@ p {
   gap: 10px;
 }
 
-.btn-primary:hover {
-  background-color: var(--color-accent-hover);
-  transform: translate(-3px, -3px);
-  box-shadow: var(--shadow-offset-hover) var(--shadow-offset-hover) 0px 0px var(--border-color);
+@media (hover: hover) {
+  .btn-primary:hover {
+    background-color: var(--color-accent-hover);
+    transform: translate(-3px, -3px);
+    box-shadow: var(--shadow-offset-hover) var(--shadow-offset-hover) 0px 0px var(--border-color);
+  }
 }
 
 .btn-primary:active {
@@ -287,10 +292,12 @@ p {
   gap: 8px;
 }
 
-.btn-secondary:hover {
-  background-color: rgba(41, 41, 41, 0.03);
-  transform: translate(-2px, -2px);
-  box-shadow: var(--shadow-offset-hover) var(--shadow-offset-hover) 0px 0px var(--border-color);
+@media (hover: hover) {
+  .btn-secondary:hover {
+    background-color: rgba(41, 41, 41, 0.03);
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-offset-hover) var(--shadow-offset-hover) 0px 0px var(--border-color);
+  }
 }
 
 .btn-secondary:active {
@@ -332,11 +339,16 @@ p {
   box-shadow: 0px 0px 0px 0px transparent;
 }
 
-.option-card:hover {
-  border-color: var(--border-color);
-  background-color: var(--color-bg-primary);
-  transform: translateY(-2px);
-  box-shadow: 2px 2px 0px 0px var(--border-color);
+@media (hover: hover) {
+  .option-card:hover {
+    border-color: var(--border-color);
+    background-color: var(--color-bg-primary);
+    transform: translateY(-2px);
+    box-shadow: 2px 2px 0px 0px var(--border-color);
+  }
+  .option-card:hover .checkmark {
+    border-color: var(--border-color);
+  }
 }
 
 .option-card.selected {
@@ -368,10 +380,6 @@ p {
   transition: all var(--transition-fast);
   flex-shrink: 0;
   background-color: var(--color-bg-results);
-}
-
-.option-card:hover .checkmark {
-  border-color: var(--border-color);
 }
 
 .option-card.selected .checkmark {
@@ -517,11 +525,13 @@ p {
   width: 100%;
 }
 
-.choice-button:hover {
-  border-color: var(--border-color);
-  background-color: var(--color-bg-primary);
-  color: var(--color-text-primary);
-  transform: translateX(4px);
+@media (hover: hover) {
+  .choice-button:hover {
+    border-color: var(--border-color);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    transform: translateX(4px);
+  }
 }
 
 .choice-button.selected {
@@ -549,9 +559,11 @@ p {
   transition: all var(--transition-fast);
 }
 
-.choice-button:hover .choice-badge {
-  border-color: var(--border-color);
-  color: var(--color-text-primary);
+@media (hover: hover) {
+  .choice-button:hover .choice-badge {
+    border-color: var(--border-color);
+    color: var(--color-text-primary);
+  }
 }
 
 .choice-button.selected .choice-badge {
@@ -718,14 +730,18 @@ p {
   color: var(--color-text-muted);
   cursor: pointer;
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   text-decoration: underline;
   margin-top: 24px;
+  padding: 10px 16px;
+  display: inline-block;
   transition: color var(--transition-fast);
 }
 
-.skip-button-link:hover {
-  color: var(--color-text-primary);
+@media (hover: hover) {
+  .skip-button-link:hover {
+    color: var(--color-text-primary);
+  }
 }
 
 /* ==========================================================================
@@ -821,7 +837,7 @@ p {
   flex: 1;
   min-width: 240px;
   padding: 14px 18px;
-  font-size: 0.95rem;
+  font-size: 1rem;
   background-color: var(--color-bg-results);
   border: var(--border-width) var(--border-style) var(--border-light);
   border-radius: var(--radius-technical);
@@ -1339,6 +1355,91 @@ p {
   .results-score-badge {
     font-size: 1.5rem;
     padding: 4px 14px;
+  }
+  
+  /* Additional Mobile Layout Optimizations */
+  .score-display-ring {
+    padding: 24px 32px;
+    margin-bottom: 24px;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .score-band-badge {
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 28px;
+  }
+
+  .email-form-card {
+    padding: 28px 20px;
+  }
+
+  .lock-banner {
+    padding: 20px !important;
+  }
+
+  .lock-banner-content {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .lock-banner-form {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .lock-input {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .lock-btn {
+    width: 100%;
+  }
+
+  .calculator-card {
+    padding: 32px 20px;
+  }
+
+  .calc-result-value {
+    font-size: 2.80rem;
+  }
+}
+
+/* Extreme Small Device (e.g. iPhone SE, smaller Android phones) */
+@media (max-width: 380px) {
+  .app-container {
+    padding: 24px 12px;
+  }
+
+  .card, .results-container, .offer-card, .email-form-card, .calculator-card {
+    padding: 24px 16px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .choice-button {
+    padding: 16px 18px;
+    gap: 12px;
+    font-size: 0.95rem;
+  }
+
+  .option-card {
+    padding: 16px;
+  }
+
+  .btn-primary, .btn-secondary {
+    padding: 16px 24px;
+    font-size: 0.9rem;
   }
 }
 
