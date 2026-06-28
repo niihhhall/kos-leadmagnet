@@ -125,6 +125,8 @@ export default function App() {
 
   // Track which question is currently visible in the center of the viewport (Scroll Spy)
   const [activeQuestionId, setActiveQuestionId] = useState(null);
+  const [trackerTop, setTrackerTop] = useState(typeof window !== 'undefined' ? window.innerHeight / 2 : 300);
+
   useEffect(() => {
     if (stage !== 'diagnostic') return;
     
@@ -133,6 +135,7 @@ export default function App() {
       const questionElements = currentSection.questions.map(q => document.getElementById(`q-container-${q.id}`));
       let currentActiveId = null;
       let minDistance = Infinity;
+      let activeRect = null;
       
       questionElements.forEach(el => {
         if (!el) return;
@@ -142,11 +145,15 @@ export default function App() {
         if (distance < minDistance) {
           minDistance = distance;
           currentActiveId = el.id.replace('q-container-', '');
+          activeRect = rect;
         }
       });
       
       if (currentActiveId) {
         setActiveQuestionId(currentActiveId);
+        if (activeRect) {
+          setTrackerTop(activeRect.top + activeRect.height / 2);
+        }
       }
     };
     
@@ -994,7 +1001,14 @@ export default function App() {
               return (
                 <>
                   {/* Sticky Right-Side Section Progress Tracker */}
-                  <div className="sticky-section-tracker">
+                  <div 
+                    className="sticky-section-tracker"
+                    style={{
+                      top: `${trackerTop}px`,
+                      transform: 'translateY(-50%)',
+                      transition: 'top 350ms cubic-bezier(0.25, 1, 0.5, 1)'
+                    }}
+                  >
                     {currentSection.questions.map((q, idx) => {
                       const isAnswered = q.type === 'checklist'
                         ? (answers[q.id] && answers[q.id].length > 0)
