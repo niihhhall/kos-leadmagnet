@@ -916,19 +916,19 @@ p {
   background-color: rgba(255, 117, 31, 0.02);
   border: var(--border-width) dashed var(--color-accent);
   border-radius: var(--radius-technical);
-  padding: 40px;
+  padding: 28px 36px;
   margin-top: 48px;
   animation: fadeIn 500ms ease-out forwards;
 }
 
 .section-bridge-text {
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   font-family: var(--font-heading);
   font-weight: 700;
   color: var(--color-text-primary);
   margin-bottom: 32px;
   text-align: center;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 /* ==========================================================================
