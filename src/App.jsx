@@ -57,6 +57,34 @@ function ScoreTeaseTicker() {
   );
 }
 
+// Animated number ticker for stats bar
+function AnimatedNumber({ value, duration = 900 }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const end = parseInt(value, 10);
+    if (start === end) {
+      setCount(end);
+      return;
+    }
+
+    const incrementTime = Math.max(Math.floor(duration / end), 20);
+
+    const timer = setInterval(() => {
+      start += 1;
+      setCount(start);
+      if (start >= end) {
+        clearInterval(timer);
+      }
+    }, incrementTime);
+
+    return () => clearInterval(timer);
+  }, [value, duration]);
+
+  return <>{count}</>;
+}
+
 export default function App() {
   // Navigation & funnel states
   const [stage, setStage] = useState('landing'); // 'landing' | 'selector' | 'diagnostic' | 'reveal' | 'results'
@@ -765,19 +793,25 @@ export default function App() {
             </div>
 
             {/* 3-col stat bar */}
-            <div className="hero-stat-bar">
+            <div className="hero-stat-bar hero-stat-bar-animate">
               <div className="hero-stat-item">
-                <span className="hero-stat-number">6</span>
+                <span className="hero-stat-number hero-stat-number-animate">
+                  <AnimatedNumber value={6} />
+                </span>
                 <span className="hero-stat-label">Areas Scored</span>
               </div>
               <div className="hero-stat-divider" />
               <div className="hero-stat-item">
-                <span className="hero-stat-number">30</span>
+                <span className="hero-stat-number hero-stat-number-animate">
+                  <AnimatedNumber value={30} />
+                </span>
                 <span className="hero-stat-label">Questions</span>
               </div>
               <div className="hero-stat-divider" />
               <div className="hero-stat-item">
-                <span className="hero-stat-number">7<span style={{fontSize:'0.9rem', fontWeight:700}}>min</span></span>
+                <span className="hero-stat-number hero-stat-number-animate">
+                  <AnimatedNumber value={7} /><span style={{fontSize:'0.9rem', fontWeight:700}}>min</span>
+                </span>
                 <span className="hero-stat-label">Avg. Time</span>
               </div>
             </div>
