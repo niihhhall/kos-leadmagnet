@@ -143,6 +143,230 @@ body::before {
   line-height: 1.4;
 }
 
+/* =============================================
+   HERO V2 — Dopamine-first redesign
+   ============================================= */
+.hero-v2 {
+  padding-top: 12px;
+  gap: 0;
+}
+
+/* Eyebrow pill */
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  background: rgba(41, 41, 41, 0.04);
+  border: 1px solid var(--border-light);
+  border-radius: 100px;
+  padding: 6px 16px;
+  margin-bottom: 28px;
+}
+
+.hero-eyebrow-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  animation: dot-pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+/* Headline */
+.hero-headline-v2 {
+  font-size: clamp(1.6rem, 3.4vw, 2.25rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 22px;
+  color: var(--color-text-primary);
+}
+
+
+/* Hero lead v2 */
+.hero-lead-v2 {
+  max-width: 520px;
+  font-size: 1.05rem;
+  margin-bottom: 36px;
+  color: var(--color-text-secondary);
+}
+
+/* Score tease strip */
+.hero-score-tease {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 20px 40px;
+  border: 2px solid var(--color-text-primary);
+  border-radius: var(--radius-technical);
+  background: var(--color-bg-results);
+  box-shadow: 5px 5px 0 0 var(--color-text-primary);
+  margin-bottom: 36px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.hero-score-tease-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.hero-score-tease-numbers {
+  line-height: 1;
+}
+
+.score-tease-num {
+  font-family: var(--font-heading);
+  font-size: 4.5rem;
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  color: var(--color-accent);
+  display: block;
+  text-align: center;
+}
+
+.hero-score-tease-sub {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
+  margin-top: 2px;
+}
+
+/* CTA wrapper with pulse ring */
+.hero-cta-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: 40px;
+}
+
+.hero-cta-pulse-ring {
+  position: absolute;
+  inset: -6px;
+  border: 2px solid rgba(255, 117, 31, 0.35);
+  border-radius: 4px;
+  animation: cta-pulse 2.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes cta-pulse {
+  0%, 100% { opacity: 0; transform: scale(1); }
+  50%       { opacity: 1; transform: scale(1.03); }
+}
+
+.btn-hero-cta {
+  width: 100%;
+  font-size: 1rem;
+  padding: 22px 36px;
+  gap: 12px;
+}
+
+/* 3-col stat bar */
+.hero-stat-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  border: 2px solid var(--color-text-primary);
+  border-radius: var(--radius-technical);
+  background: var(--color-bg-results);
+  box-shadow: 4px 4px 0 0 var(--color-text-primary);
+  width: 100%;
+  max-width: 420px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.hero-stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 12px;
+  gap: 3px;
+}
+
+.hero-stat-number {
+  font-family: var(--font-heading);
+  font-size: 1.9rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+.hero-stat-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+
+.hero-stat-divider {
+  width: 2px;
+  height: 40px;
+  background: var(--border-color);
+  flex-shrink: 0;
+}
+
+/* Trust badge row */
+.hero-trust-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px 24px;
+}
+
+.hero-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.01em;
+}
+
+.hero-trust-item svg {
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .hero-headline-v2 {
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+  .score-tease-num {
+    font-size: 3.8rem;
+  }
+  .hero-score-tease {
+    padding: 16px 28px;
+  }
+}
+
+
+
 /* Typography Overhaul */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
@@ -473,7 +697,6 @@ p {
   border-left: 4px solid var(--color-accent);
   padding-left: 24px;
   margin-bottom: 48px;
-  font-style: italic;
   line-height: 1.7;
 }
 
@@ -1465,3 +1688,481 @@ p {
 .text-primary { color: var(--color-text-primary) !important; }
 .font-semibold { font-weight: 600 !important; }
 .uppercase { text-transform: uppercase !important; }
+
+
+/* ==========================================================================
+   KINETICOS SYSTEM FUNCTIONAL CONTROLS & REPORT DESIGN (REACTION & RELATIONAL)
+   ========================================================================== */
+
+/* 1. Scale Selector (Confidence Scale S5Q2a) */
+.scale-container {
+  margin-top: 16px;
+  width: 100%;
+}
+
+.scale-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.scale-button {
+  flex: 1;
+  background-color: var(--color-bg-results);
+  border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: var(--radius-technical);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 14px 0;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: 2px 2px 0px 0px var(--border-color);
+}
+
+.scale-button:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px 0px var(--border-color);
+  background-color: rgba(41, 41, 41, 0.03);
+}
+
+.scale-button.selected {
+  background-color: var(--color-accent);
+  color: #FFFFFF;
+  border-color: var(--border-color);
+  box-shadow: 1px 1px 0px 0px var(--border-color);
+  transform: translate(1px, 1px);
+}
+
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  color: var(--color-text-secondary);
+}
+
+/* 2. Checklist Selector (OCI checklists S5Q5 & S6Q5) */
+.checklist-container {
+  width: 100%;
+}
+
+.checklist-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.checklist-item-btn {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: var(--color-bg-results);
+  border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: var(--radius-technical);
+  padding: 16px 20px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+  box-shadow: 2px 2px 0px 0px var(--border-color);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+.checklist-item-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px 0px var(--border-color);
+  background-color: rgba(41, 41, 41, 0.02);
+}
+
+.checklist-item-btn.checked {
+  border-color: var(--border-color);
+  box-shadow: 2px 2px 0px 0px var(--border-color);
+}
+
+.checkbox-box {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-color);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  flex-shrink: 0;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.checkbox-box.checked {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.checkbox-check {
+  color: #FFFFFF;
+}
+
+.checklist-item-text {
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* 3. Conditional Textarea (Q6.5 detail input) */
+.conditional-textarea {
+  width: 100%;
+  animation: fadeIn var(--transition-normal);
+}
+
+.textarea-label {
+  color: var(--color-text-primary);
+}
+
+.textarea-input {
+  width: 100%;
+  background-color: var(--color-bg-primary);
+  border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: var(--radius-technical);
+  padding: 14px 16px;
+  font-family: var(--font-primary);
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+  outline: none;
+  resize: vertical;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.textarea-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0px 0px 0px 2px rgba(255, 117, 31, 0.15);
+}
+
+/* 4. Lock Overlay and Blurring */
+.pattern-container-relative {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-technical);
+}
+
+.pattern-blur-gate {
+  filter: blur(4px);
+  opacity: 0.28;
+  pointer-events: none;
+  user-select: none;
+}
+
+.pattern-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  background-color: rgba(255, 255, 245, 0.4);
+}
+
+.pattern-overlay-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--color-text-primary);
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: 20px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+  letter-spacing: 0.05em;
+}
+
+/* Upgrade Lock Banner */
+.lock-banner {
+  background-color: #292929 !important;
+  color: #FFFFF5 !important;
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0px 0px var(--color-accent) !important;
+  border-color: #292929 !important;
+}
+
+.lock-banner-content {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.lock-icon {
+  margin-top: 4px;
+}
+
+.lock-banner-form {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  max-width: 500px;
+  margin-top: 16px;
+}
+
+.lock-input {
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #FFFFFF !important;
+  padding: 12px 16px !important;
+}
+
+.lock-input:focus {
+  border-color: var(--color-accent) !important;
+}
+
+.lock-btn {
+  width: auto !important;
+  padding: 12px 24px !important;
+  font-size: 0.85rem !important;
+}
+
+/* 5. Executive Diagnosis Card */
+.executive-diagnosis-paragraph {
+  border: 1px solid var(--border-light);
+  background-color: rgba(255, 117, 31, 0.04);
+  font-size: 1rem;
+  color: var(--color-text-primary);
+  line-height: 1.65;
+}
+
+.border-accent {
+  border-color: var(--color-accent-border) !important;
+}
+
+.bg-accent-subtle {
+  background-color: var(--color-accent-subtle) !important;
+}
+
+.rounded-technical {
+  border-radius: var(--radius-technical) !important;
+}
+
+.border-dark {
+  border: var(--border-width) var(--border-style) var(--border-color) !important;
+}
+
+.border-light {
+  border: 1px solid var(--border-light) !important;
+}
+
+.flex-align-center-gap-2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.flex-align-center-gap-4 {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.flex-direction-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.gap-6 {
+  gap: 6px;
+}
+
+.gap-16 {
+  gap: 16px;
+}
+
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card-shadow {
+  box-shadow: 3px 3px 0px 0px var(--border-color) !important;
+}
+
+/* OCI Tracker Card */
+.oci-tracker-card {
+  box-shadow: 3px 3px 0px 0px var(--border-color);
+}
+
+/* 6. Expandable Reasoning Box */
+.btn-reasoning-toggle {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.btn-reasoning-toggle:hover {
+  color: var(--color-text-primary);
+  background-color: rgba(41, 41, 41, 0.04);
+}
+
+.reasoning-details {
+  border-left: 3px solid var(--color-accent) !important;
+  background-color: rgba(41, 41, 41, 0.015);
+  line-height: 1.6;
+}
+
+/* 7. Confidence vs. Infrastructure Gap Chart */
+.flex-bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bar-group {
+  width: 100%;
+}
+
+.bar-container-h {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.bar-fill-h {
+  height: 12px;
+  background-color: var(--color-accent);
+  border-radius: 1px;
+  transition: width 1s ease-in-out;
+}
+
+.bar-fill-h.bg-dark {
+  background-color: var(--color-text-primary);
+}
+
+/* Status Colors */
+.breakdown-score-metric.critical {
+  background-color: rgba(255, 117, 31, 0.08);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent-border);
+}
+
+.breakdown-score-metric.warning {
+  background-color: rgba(218, 165, 32, 0.08);
+  color: #B8860B;
+  border: 1px solid rgba(218, 165, 32, 0.2);
+}
+
+.breakdown-score-metric.healthy {
+  background-color: rgba(34, 139, 34, 0.08);
+  color: #228B22;
+  border: 1px solid rgba(34, 139, 34, 0.2);
+}
+
+/* Progress bar score colors */
+.breakdown-bar-fill.low-score {
+  background-color: var(--color-accent);
+}
+
+.breakdown-bar-fill.mid-score {
+  background-color: #DAB93E; /* Gold/Amber */
+}
+
+.breakdown-bar-fill.high-score {
+  background-color: #228B22; /* Forest Green */
+}
+
+/* 8. Recommendations Styling */
+.rec-priority-badge {
+  display: inline-block;
+  background-color: var(--color-text-primary);
+  color: #FFFFFF;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 2px;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+/* 9. Timeline Roadmap */
+.roadmap-phases {
+  position: relative;
+  padding-left: 12px;
+  border-left: 2px solid var(--border-light);
+  margin-top: 12px;
+}
+
+.roadmap-phase-item {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.roadmap-phase-item:last-child {
+  margin-bottom: 0;
+}
+
+.phase-num {
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  font-size: 0.7rem !important;
+  background-color: var(--color-text-primary);
+  color: #FFFFFF;
+  border-radius: var(--radius-technical);
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+/* Responsive Overrides */
+@media (max-width: 600px) {
+  .scale-buttons {
+    gap: 6px;
+  }
+  .scale-button {
+    font-size: 0.95rem;
+    padding: 10px 0;
+  }
+  .lock-banner-content {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .lock-banner-form {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .lock-btn {
+    width: 100% !important;
+  }
+}
+
+/* Funnel Navigation Buttons Row */
+.funnel-nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+  gap: 16px;
+  width: 100%;
+}
+
+.funnel-nav-buttons .btn-primary,
+.funnel-nav-buttons .btn-secondary {
+  flex: 1;
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .funnel-nav-buttons {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+  .funnel-nav-buttons button {
+    width: 100%;
+  }
+}
