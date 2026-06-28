@@ -973,13 +973,16 @@ export default function App() {
                   </div>
 
                   <div className="section-opener-card">
-                    <p className="section-opener-desc">
-                      {seriousOperatorBenchmarks[currentSection.id] ? (
-                        profession && seriousOperatorBenchmarks[currentSection.id][profession] 
-                          ? seriousOperatorBenchmarks[currentSection.id][profession] 
-                          : seriousOperatorBenchmarks[currentSection.id].general
-                      ) : ""}
-                    </p>
+                    <div className="section-opener-content">
+                      <span className="section-opener-pill">[ Serious Operator Standard ]</span>
+                      <p className="section-opener-desc">
+                        {seriousOperatorBenchmarks[currentSection.id] ? (
+                          profession && seriousOperatorBenchmarks[currentSection.id][profession] 
+                            ? seriousOperatorBenchmarks[currentSection.id][profession] 
+                            : seriousOperatorBenchmarks[currentSection.id].general
+                        ) : ""}
+                      </p>
+                    </div>
                   </div>
 
                   {currentSection.questions.map((q, idx) => (
