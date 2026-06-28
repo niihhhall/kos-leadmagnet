@@ -146,15 +146,30 @@ export default function App() {
       } else if (hash === '#/selector') {
         setStage('selector');
       } else if (hash.startsWith('#/diagnostic/')) {
-        const secNum = parseInt(hash.replace('#/diagnostic/', ''), 10);
-        if (secNum >= 1 && secNum <= 6) {
-          setStage('diagnostic');
-          setCurrentSectionIndex(secNum - 1);
+        if (!profession || !clientCount) {
+          setStage('selector');
+          window.location.hash = '#/selector';
+        } else {
+          const secNum = parseInt(hash.replace('#/diagnostic/', ''), 10);
+          if (secNum >= 1 && secNum <= 6) {
+            setStage('diagnostic');
+            setCurrentSectionIndex(secNum - 1);
+          }
         }
       } else if (hash === '#/reveal') {
-        setStage('reveal');
+        if (!profession || !clientCount) {
+          setStage('selector');
+          window.location.hash = '#/selector';
+        } else {
+          setStage('reveal');
+        }
       } else if (hash === '#/results') {
-        setStage('results');
+        if (!profession || !clientCount) {
+          setStage('selector');
+          window.location.hash = '#/selector';
+        } else {
+          setStage('results');
+        }
       }
     };
 
@@ -166,7 +181,7 @@ export default function App() {
     }
 
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [profession, clientCount]);
 
   // Score counter animation in reveal stage
   useEffect(() => {
@@ -876,7 +891,6 @@ export default function App() {
               <h3 className="mb-12">How many active clients are you currently working with?</h3>
               <div className="option-grid option-grid-2x2">
                 {[
-                  { id: '1-2', label: '1 to 2 clients', desc: 'Focus on scaling foundation' },
                   { id: '3-4', label: '3 to 4 clients', desc: 'Facing capacity ceiling' },
                   { id: '5+', label: '5 or more clients', desc: 'Need active systems & records' }
                 ].map(c => (
