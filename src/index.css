@@ -2424,48 +2424,85 @@ p {
   width: 100%;
   max-width: 480px;
   margin: 0 auto 36px auto;
-  padding: 18px 24px;
-  border-left: 2px dashed var(--color-accent);
-  border-right: 2px dashed var(--color-accent);
-  background-color: var(--color-accent-subtle);
+  padding: 20px 24px;
+  border: 2px dashed var(--color-accent);
+  background: linear-gradient(
+    120deg,
+    rgba(255, 117, 31, 0.03) 30%,
+    rgba(255, 117, 31, 0.12) 42%,
+    rgba(255, 117, 31, 0.12) 58%,
+    rgba(255, 117, 31, 0.03) 70%
+  );
+  background-size: 200% auto;
   border-radius: var(--radius-technical);
-  animation: honesty-pulse 4.5s ease-in-out infinite;
+  box-shadow: 3px 3px 0px 0px var(--color-text-primary);
+  animation: honesty-pulse 3.5s ease-in-out infinite, honesty-shimmer 5s linear infinite;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+
+.landing-honesty-container:hover {
+  transform: scale(1.02) translate(-2px, -2px);
+  box-shadow: 5px 5px 0px 0px var(--color-accent);
+  border-color: var(--color-text-primary);
 }
 
 .landing-honesty-container .honesty-eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
   color: var(--color-accent);
   text-transform: uppercase;
   margin-bottom: 8px;
+  animation: honesty-eyebrow-flicker 5s infinite;
 }
 
 .landing-honesty-container .honesty-line-main {
-  font-size: 0.9rem;
-  font-weight: 800;
+  font-size: 0.92rem;
+  font-weight: 900;
   color: var(--color-text-primary);
-  margin-bottom: 4px;
-  line-height: 1.4;
+  margin-bottom: 6px;
+  line-height: 1.45;
 }
 
 .landing-honesty-container .honesty-line-sub {
   font-size: 0.8rem;
   color: var(--color-text-secondary);
   margin-bottom: 0;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 @keyframes honesty-pulse {
   0%, 100% {
-    opacity: 0.85;
+    opacity: 0.9;
     transform: scale(1);
+    box-shadow: 3px 3px 0px 0px var(--color-text-primary);
     border-color: var(--color-accent);
   }
   50% {
     opacity: 1;
-    transform: scale(1.02);
+    transform: scale(1.012);
+    box-shadow: 5px 5px 0px 0px var(--color-accent);
     border-color: var(--color-text-primary);
+  }
+}
+
+@keyframes honesty-shimmer {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}
+
+@keyframes honesty-eyebrow-flicker {
+  0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 4px rgba(255, 117, 31, 0.3);
+  }
+  20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+    opacity: 0.45;
+    text-shadow: none;
   }
 }
