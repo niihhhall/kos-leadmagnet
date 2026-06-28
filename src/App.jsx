@@ -991,7 +991,7 @@ export default function App() {
 
         {/* STAGE 3: DIAGNOSTIC QUESTIONNAIRE */}
         {stage === 'diagnostic' && (
-          <div className="animate-slide-left">
+          <div className="animate-slide-left diagnostic-stage-wrapper">
             {(() => {
               const currentSection = sections[currentSectionIndex];
               const answeredInSection = currentSection.questions.filter(q => {
