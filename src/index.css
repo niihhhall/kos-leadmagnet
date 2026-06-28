@@ -2611,7 +2611,8 @@ p {
 /* Floating Right-Side Section Tracker */
 .sticky-section-tracker {
   position: fixed;
-  right: 28px;
+  left: calc(50% + 360px + 24px);
+  right: auto;
   top: 55%;
   transform: translateY(-50%);
   display: flex;
@@ -2708,7 +2709,7 @@ p {
   transform: translateX(0);
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 920px) {
   .sticky-section-tracker {
     display: none;
   }
