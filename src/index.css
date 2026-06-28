@@ -744,13 +744,71 @@ p {
    Questionnaire & Choices
    ========================================================================== */
 
-.section-opener-text {
-  font-size: 1.1rem;
-  color: var(--color-text-secondary);
-  border-left: 4px solid var(--color-accent);
-  padding-left: 24px;
+/* Section Opener Alert Card */
+.section-opener-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  background-color: var(--color-accent-subtle);
+  border: var(--border-width) var(--border-style) var(--color-accent);
+  border-radius: var(--radius-technical);
+  padding: 24px;
   margin-bottom: 48px;
-  line-height: 1.7;
+  box-shadow: 3px 3px 0px 0px var(--color-accent);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  animation: openerSlideDown 450ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes openerSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section-opener-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px 0px var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+
+.section-opener-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 117, 31, 0.1);
+  border: 1px solid var(--color-accent-border);
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-technical);
+  flex-shrink: 0;
+  color: var(--color-accent);
+}
+
+.section-opener-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.section-opener-pill {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+  text-transform: uppercase;
+}
+
+.section-opener-desc {
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0;
 }
 
 .question-container {
