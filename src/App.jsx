@@ -132,16 +132,30 @@ export default function App() {
     
     const handleScroll = () => {
       const currentSection = sections[currentSectionIndex];
+      
+      // If we are scrolled near the top of the page, default to the first question
+      if (window.scrollY < 180) {
+        const firstQ = currentSection.questions[0];
+        const el = document.getElementById(`q-container-${firstQ.id}`);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          setActiveQuestionId(firstQ.id);
+          setTrackerTop(rect.top + rect.height / 2);
+          return;
+        }
+      }
+      
       const questionElements = currentSection.questions.map(q => document.getElementById(`q-container-${q.id}`));
       let currentActiveId = null;
       let minDistance = Infinity;
       let activeRect = null;
+      const referenceY = window.innerHeight * 0.4; // Focus line slightly above center
       
       questionElements.forEach(el => {
         if (!el) return;
         const rect = el.getBoundingClientRect();
-        // Distance from element center to viewport center
-        const distance = Math.abs(rect.top + rect.height / 2 - window.innerHeight / 2);
+        const elementCenter = rect.top + rect.height / 2;
+        const distance = Math.abs(elementCenter - referenceY);
         if (distance < minDistance) {
           minDistance = distance;
           currentActiveId = el.id.replace('q-container-', '');
