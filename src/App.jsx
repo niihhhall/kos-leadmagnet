@@ -195,7 +195,7 @@ export default function App() {
       }
       
       let start = 0;
-      const duration = 2000; // 2 seconds
+      const duration = 3200; // 3.2 seconds
       const stepTime = Math.max(Math.floor(duration / finalScore), 25);
       
       const timer = setInterval(() => {
@@ -203,8 +203,8 @@ export default function App() {
         setAnimatedScore(start);
         if (start >= finalScore) {
           clearInterval(timer);
-          setTimeout(() => setShowBand(true), 200);
-          setTimeout(() => setShowEmailGate(true), 800);
+          setTimeout(() => setShowBand(true), 300);
+          setTimeout(() => setShowEmailGate(true), 1500); // 1.5 seconds hold
         }
       }, stepTime);
 
@@ -1180,11 +1180,12 @@ export default function App() {
                       ></div>
                     </div>
                     <div className="reveal-loader-status-text text-mono text-xs uppercase tracking-wider mt-12">
-                      {animatedScore < finalScore * 0.25 && "Analyzing your diagnostic responses..."}
-                      {animatedScore >= finalScore * 0.25 && animatedScore < finalScore * 0.5 && "Benchmarking operational parameters..."}
-                      {animatedScore >= finalScore * 0.5 && animatedScore < finalScore * 0.75 && "Identifying systemic leakage points..."}
-                      {animatedScore >= finalScore * 0.75 && animatedScore < finalScore && "Compiling score reports..."}
-                      {animatedScore === finalScore && "Calculations complete!"}
+                      {animatedScore < finalScore * 0.20 && "Initializing system audit..."}
+                      {animatedScore >= finalScore * 0.20 && animatedScore < finalScore * 0.40 && "Analyzing your diagnostic responses..."}
+                      {animatedScore >= finalScore * 0.40 && animatedScore < finalScore * 0.60 && "Benchmarking operational parameters..."}
+                      {animatedScore >= finalScore * 0.60 && animatedScore < finalScore * 0.80 && "Identifying systemic leakage points..."}
+                      {animatedScore >= finalScore * 0.80 && animatedScore < finalScore && "Compiling custom recommendations..."}
+                      {animatedScore === finalScore && "Calculations complete! Preparing your report..."}
                     </div>
                   </div>
                 );
