@@ -747,12 +747,13 @@ p {
 /* Section Opener Alert Card */
 .section-opener-card {
   display: flex;
-  align-items: flex-start;
-  gap: 18px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   background-color: var(--color-accent-subtle);
   border: var(--border-width) var(--border-style) var(--color-accent);
   border-radius: var(--radius-technical);
-  padding: 24px;
+  padding: 24px 32px;
   margin-bottom: 48px;
   box-shadow: 3px 3px 0px 0px var(--color-accent);
   transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
