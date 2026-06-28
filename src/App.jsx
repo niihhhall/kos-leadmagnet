@@ -132,25 +132,33 @@ export default function App() {
     
     const handleScroll = () => {
       const currentSection = sections[currentSectionIndex];
-      const questionElements = currentSection.questions.map(q => document.getElementById(`q-container-${q.id}`));
       let currentActiveId = null;
-      let minDistance = Infinity;
       let activeRect = null;
       
-      // Target focus line: 180px from top of viewport (just below progress headers)
-      const targetY = 180;
+      // Calculate viewport-relative scroll trigger point (e.g. 55% of viewport height)
+      const scrollTriggerPoint = window.scrollY + window.innerHeight * 0.55;
       
-      questionElements.forEach(el => {
-        if (!el) return;
+      for (let i = 0; i < currentSection.questions.length; i++) {
+        const q = currentSection.questions[i];
+        const el = document.getElementById(`q-container-${q.id}`);
+        if (!el) continue;
         const rect = el.getBoundingClientRect();
-        // Distance from element's top to our target focus line
-        const distance = Math.abs(rect.top - targetY);
-        if (distance < minDistance) {
-          minDistance = distance;
-          currentActiveId = el.id.replace('q-container-', '');
+        // Calculate absolute top position of the container relative to document
+        const absoluteTop = rect.top + window.scrollY;
+        
+        if (scrollTriggerPoint >= absoluteTop) {
+          currentActiveId = q.id;
           activeRect = rect;
         }
-      });
+      }
+      
+      // If we haven't scrolled past any question container yet, default to the first question in the section
+      if (!currentActiveId && currentSection.questions.length > 0) {
+        const firstQ = currentSection.questions[0];
+        currentActiveId = firstQ.id;
+        const el = document.getElementById(`q-container-${firstQ.id}`);
+        if (el) activeRect = el.getBoundingClientRect();
+      }
       
       if (currentActiveId) {
         setActiveQuestionId(currentActiveId);
