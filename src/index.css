@@ -916,17 +916,17 @@ p {
   background-color: rgba(255, 117, 31, 0.02);
   border: var(--border-width) dashed var(--color-accent);
   border-radius: var(--radius-technical);
-  padding: 28px 36px;
+  padding: 20px 24px;
   margin-top: 48px;
   animation: fadeIn 500ms ease-out forwards;
 }
 
 .section-bridge-text {
-  font-size: 0.98rem;
-  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-family: var(--font-primary);
   font-weight: 700;
   color: var(--color-text-primary);
-  margin-bottom: 32px;
+  margin-bottom: 24px;
   text-align: center;
   line-height: 1.5;
 }
