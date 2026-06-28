@@ -922,7 +922,7 @@ p {
 }
 
 .section-bridge-text {
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   font-family: var(--font-heading);
   font-weight: 700;
   color: var(--color-text-primary);
