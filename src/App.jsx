@@ -793,7 +793,7 @@ export default function App() {
             </div>
 
             {/* 3-col stat bar */}
-            <div className="hero-stat-bar hero-stat-bar-animate">
+            <div className="hero-stat-bar">
               <div className="hero-stat-item">
                 <span className="hero-stat-number hero-stat-number-animate">
                   <AnimatedNumber value={6} />
