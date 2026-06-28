@@ -953,6 +953,32 @@ export default function App() {
               
               return (
                 <>
+                  {/* Sticky Right-Side Section Progress Tracker */}
+                  <div className="sticky-section-tracker">
+                    {currentSection.questions.map((q, idx) => {
+                      const isAnswered = q.type === 'checklist'
+                        ? (answers[q.id] && answers[q.id].length > 0)
+                        : (answers[q.id] !== undefined);
+                      return (
+                        <div key={q.id} className="tracker-dot-wrapper">
+                          <button
+                            type="button"
+                            className={`tracker-dot ${isAnswered ? 'answered' : ''}`}
+                            onClick={() => {
+                              const el = document.getElementById(`q-container-${q.id}`);
+                              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }}
+                          >
+                            {isAnswered ? "✓" : idx + 1}
+                          </button>
+                          <span className="tracker-tooltip">
+                            {isAnswered ? `Q0${idx + 1}: Answered` : `Q0${idx + 1}: Pending`}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
                   <div className="progress-header">
                     <div>
                       <span className="progress-title-sub text-mono">[0{currentSectionIndex + 1}/06]</span>
@@ -986,7 +1012,7 @@ export default function App() {
                   </div>
 
                   {currentSection.questions.map((q, idx) => (
-                    <div key={q.id} className="question-container">
+                    <div key={q.id} id={`q-container-${q.id}`} className="question-container">
                       <div className="question-text">
                         <span className="question-num text-mono">
                           [0{idx + 1}]
