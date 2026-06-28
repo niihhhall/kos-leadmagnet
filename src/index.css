@@ -347,13 +347,13 @@ body::before {
   color: var(--color-accent);
 }
 
-.hero-stat-number-animate {
-  animation: number-flash 4.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+.hero-stat-label-animate {
+  animation: label-flash 4.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
 }
 
-@keyframes number-flash {
+@keyframes label-flash {
   0%, 100% {
-    color: var(--color-text-primary);
+    color: var(--color-text-muted);
   }
   12%, 24% {
     color: var(--color-accent);
@@ -367,6 +367,11 @@ body::before {
   text-transform: uppercase;
   color: var(--color-text-muted);
   font-family: var(--font-mono);
+  transition: color var(--transition-normal);
+}
+
+.hero-stat-bar:hover .hero-stat-label {
+  color: var(--color-text-primary);
 }
 
 .hero-stat-divider {

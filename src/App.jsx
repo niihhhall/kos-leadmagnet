@@ -795,24 +795,24 @@ export default function App() {
             {/* 3-col stat bar */}
             <div className="hero-stat-bar">
               <div className="hero-stat-item">
-                <span className="hero-stat-number hero-stat-number-animate">
+                <span className="hero-stat-number">
                   <AnimatedNumber value={6} />
                 </span>
-                <span className="hero-stat-label">Areas Scored</span>
+                <span className="hero-stat-label hero-stat-label-animate">Areas Scored</span>
               </div>
               <div className="hero-stat-divider" />
               <div className="hero-stat-item">
-                <span className="hero-stat-number hero-stat-number-animate">
+                <span className="hero-stat-number">
                   <AnimatedNumber value={30} />
                 </span>
-                <span className="hero-stat-label">Questions</span>
+                <span className="hero-stat-label hero-stat-label-animate">Questions</span>
               </div>
               <div className="hero-stat-divider" />
               <div className="hero-stat-item">
-                <span className="hero-stat-number hero-stat-number-animate">
+                <span className="hero-stat-number">
                   <AnimatedNumber value={7} /><span style={{fontSize:'0.9rem', fontWeight:700}}>min</span>
                 </span>
-                <span className="hero-stat-label">Avg. Time</span>
+                <span className="hero-stat-label hero-stat-label-animate">Avg. Time</span>
               </div>
             </div>
 
