@@ -125,7 +125,6 @@ export default function App() {
 
   // Track which question is currently visible in the center of the viewport (Scroll Spy)
   const [activeQuestionId, setActiveQuestionId] = useState(null);
-  const [trackerTop, setTrackerTop] = useState(typeof window !== 'undefined' ? window.innerHeight / 2 : 300);
 
   useEffect(() => {
     if (stage !== 'diagnostic') return;
@@ -133,7 +132,6 @@ export default function App() {
     const handleScroll = () => {
       const currentSection = sections[currentSectionIndex];
       let currentActiveId = null;
-      let activeRect = null;
       
       // Calculate viewport-relative scroll trigger point (e.g. 55% of viewport height)
       const scrollTriggerPoint = window.scrollY + window.innerHeight * 0.55;
@@ -148,28 +146,16 @@ export default function App() {
         
         if (scrollTriggerPoint >= absoluteTop) {
           currentActiveId = q.id;
-          activeRect = rect;
         }
       }
       
       // If we haven't scrolled past any question container yet, default to the first question in the section
       if (!currentActiveId && currentSection.questions.length > 0) {
-        const firstQ = currentSection.questions[0];
-        currentActiveId = firstQ.id;
-        const el = document.getElementById(`q-container-${firstQ.id}`);
-        if (el) activeRect = el.getBoundingClientRect();
+        currentActiveId = currentSection.questions[0].id;
       }
       
       if (currentActiveId) {
         setActiveQuestionId(currentActiveId);
-        if (activeRect) {
-          const targetTop = activeRect.top + activeRect.height / 2;
-          const halfTrackerHeight = 110; // Half height of the tracker card
-          const minTop = halfTrackerHeight + 24; // Ensure 24px spacing from top of viewport
-          const maxTop = window.innerHeight - halfTrackerHeight - 24; // Ensure 24px spacing from bottom of viewport
-          const clampedTop = Math.max(minTop, Math.min(maxTop, targetTop));
-          setTrackerTop(clampedTop);
-        }
       }
     };
     
@@ -1017,14 +1003,7 @@ export default function App() {
               return (
                 <>
                   {/* Sticky Right-Side Section Progress Tracker */}
-                  <div 
-                    className="sticky-section-tracker"
-                    style={{
-                      top: `${trackerTop}px`,
-                      transform: 'translateY(-50%)',
-                      transition: 'top 350ms cubic-bezier(0.25, 1, 0.5, 1)'
-                    }}
-                  >
+                  <div className="sticky-section-tracker">
                     {currentSection.questions.map((q, idx) => {
                       const isAnswered = q.type === 'checklist'
                         ? (answers[q.id] && answers[q.id].length > 0)
