@@ -195,7 +195,7 @@ export default function App() {
       }
       
       let start = 0;
-      const duration = 1500; // 1.5 seconds
+      const duration = 2000; // 2 seconds
       const stepTime = Math.max(Math.floor(duration / finalScore), 25);
       
       const timer = setInterval(() => {
@@ -204,7 +204,7 @@ export default function App() {
         if (start >= finalScore) {
           clearInterval(timer);
           setTimeout(() => setShowBand(true), 200);
-          setTimeout(() => setShowEmailGate(true), 600);
+          setTimeout(() => setShowEmailGate(true), 800);
         }
       }, stepTime);
 
@@ -1167,6 +1167,29 @@ export default function App() {
               <div className="score-number">{animatedScore}</div>
               <div className="score-max">OUT OF 60</div>
             </div>
+
+            {!showEmailGate && (
+              (() => {
+                const finalScore = Math.round(calculateTotalScore());
+                return (
+                  <div className="reveal-loader-container">
+                    <div className="reveal-loader-bar-track">
+                      <div 
+                        className="reveal-loader-bar-fill" 
+                        style={{ width: `${finalScore > 0 ? (animatedScore / finalScore) * 100 : 100}%` }}
+                      ></div>
+                    </div>
+                    <div className="reveal-loader-status-text text-mono text-xs uppercase tracking-wider mt-12">
+                      {animatedScore < finalScore * 0.25 && "Analyzing your diagnostic responses..."}
+                      {animatedScore >= finalScore * 0.25 && animatedScore < finalScore * 0.5 && "Benchmarking operational parameters..."}
+                      {animatedScore >= finalScore * 0.5 && animatedScore < finalScore * 0.75 && "Identifying systemic leakage points..."}
+                      {animatedScore >= finalScore * 0.75 && animatedScore < finalScore && "Compiling score reports..."}
+                      {animatedScore === finalScore && "Calculations complete!"}
+                    </div>
+                  </div>
+                );
+              })()
+            )}
 
             {showEmailGate && (
               <div className="animate-fade-in w-full">
