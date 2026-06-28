@@ -123,6 +123,46 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [stage, currentSectionIndex]);
 
+  // Track which question is currently visible in the center of the viewport (Scroll Spy)
+  const [activeQuestionId, setActiveQuestionId] = useState(null);
+  useEffect(() => {
+    if (stage !== 'diagnostic') return;
+    
+    const handleScroll = () => {
+      const currentSection = sections[currentSectionIndex];
+      const questionElements = currentSection.questions.map(q => document.getElementById(`q-container-${q.id}`));
+      let currentActiveId = null;
+      let minDistance = Infinity;
+      
+      questionElements.forEach(el => {
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        // Distance from element center to viewport center
+        const distance = Math.abs(rect.top + rect.height / 2 - window.innerHeight / 2);
+        if (distance < minDistance) {
+          minDistance = distance;
+          currentActiveId = el.id.replace('q-container-', '');
+        }
+      });
+      
+      if (currentActiveId) {
+        setActiveQuestionId(currentActiveId);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleScroll);
+    
+    // Initial run with a small delay to let content render/settle
+    const initialTimeout = setTimeout(handleScroll, 100);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+      clearTimeout(initialTimeout);
+    };
+  }, [stage, currentSectionIndex, answers]);
+
   // Sync state to URL hash
   useEffect(() => {
     let expectedHash = '';
@@ -959,11 +999,12 @@ export default function App() {
                       const isAnswered = q.type === 'checklist'
                         ? (answers[q.id] && answers[q.id].length > 0)
                         : (answers[q.id] !== undefined);
+                      const isActive = activeQuestionId === q.id;
                       return (
                         <div key={q.id} className="tracker-dot-wrapper">
                           <button
                             type="button"
-                            className={`tracker-dot ${isAnswered ? 'answered' : ''}`}
+                            className={`tracker-dot ${isAnswered ? 'answered' : ''} ${isActive ? 'active' : ''}`}
                             onClick={() => {
                               const el = document.getElementById(`q-container-${q.id}`);
                               if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
