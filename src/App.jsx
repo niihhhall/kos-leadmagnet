@@ -1075,12 +1075,18 @@ export default function App() {
                   {isSectionComplete(currentSection) && (
                     <div className="section-bridge-container animate-fade-in">
                       {currentSectionIndex === 1 && (
-                        <div className="micro-progress-hint text-xs text-accent text-mono mb-8 uppercase tracking-wider" style={{ fontWeight: 'bold', letterSpacing: '0.05em' }}>
+                        <div className="micro-progress-hint text-xs text-accent text-mono mb-8 uppercase tracking-wider text-center" style={{ fontWeight: 'bold', letterSpacing: '0.05em' }}>
                           You're 35% through. Section 3 takes about 90 seconds.
                         </div>
                       )}
                       <p className="section-bridge-text" style={{ marginBottom: 0 }}>
-                        {currentSectionIndex === 0 && "You've been describing how you define and qualify what comes into your business. The next section looks at how you manage what's already inside it."}
+                        {currentSectionIndex === 0 && (
+                          <>
+                            You've been describing how you define and qualify what comes into your business.
+                            <br />
+                            The next section looks at how you manage what's already inside it.
+                          </>
+                        )}
                         {currentSectionIndex === 1 && "You've been describing how your work gets organized and executed. The next section looks at how your work gets found."}
                         {currentSectionIndex === 2 && "You've been describing your content. The next section looks at what happens to the leads that content touches."}
                         {currentSectionIndex === 3 && "You've been describing how clients find you. The next section looks at what happens once they're in."}
