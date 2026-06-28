@@ -163,7 +163,12 @@ export default function App() {
       if (currentActiveId) {
         setActiveQuestionId(currentActiveId);
         if (activeRect) {
-          setTrackerTop(activeRect.top + activeRect.height / 2);
+          const targetTop = activeRect.top + activeRect.height / 2;
+          const halfTrackerHeight = 110; // Half height of the tracker card
+          const minTop = halfTrackerHeight + 24; // Ensure 24px spacing from top of viewport
+          const maxTop = window.innerHeight - halfTrackerHeight - 24; // Ensure 24px spacing from bottom of viewport
+          const clampedTop = Math.max(minTop, Math.min(maxTop, targetTop));
+          setTrackerTop(clampedTop);
         }
       }
     };
