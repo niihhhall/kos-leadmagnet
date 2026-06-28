@@ -1087,11 +1087,41 @@ export default function App() {
                             The next section looks at how you manage what's already inside it.
                           </>
                         )}
-                        {currentSectionIndex === 1 && "You've been describing how your work gets organized and executed. The next section looks at how your work gets found."}
-                        {currentSectionIndex === 2 && "You've been describing your content. The next section looks at what happens to the leads that content touches."}
-                        {currentSectionIndex === 3 && "You've been describing how clients find you. The next section looks at what happens once they're in."}
-                        {currentSectionIndex === 4 && "Client systems scoped. Finally, let's review your real-time financial controls."}
-                        {currentSectionIndex === 5 && "Operational diagnostic complete. Let's compute your total score."}
+                        {currentSectionIndex === 1 && (
+                          <>
+                            You've been describing how your work gets organized and executed.
+                            <br />
+                            The next section looks at how your work gets found.
+                          </>
+                        )}
+                        {currentSectionIndex === 2 && (
+                          <>
+                            You've been describing your content.
+                            <br />
+                            The next section looks at what happens to the leads that content touches.
+                          </>
+                        )}
+                        {currentSectionIndex === 3 && (
+                          <>
+                            You've been describing how clients find you.
+                            <br />
+                            The next section looks at what happens once they're in.
+                          </>
+                        )}
+                        {currentSectionIndex === 4 && (
+                          <>
+                            Client systems scoped.
+                            <br />
+                            Finally, let's review your real-time financial controls.
+                          </>
+                        )}
+                        {currentSectionIndex === 5 && (
+                          <>
+                            Operational diagnostic complete.
+                            <br />
+                            Let's compute your total score.
+                          </>
+                        )}
                       </p>
                     </div>
                   )}
