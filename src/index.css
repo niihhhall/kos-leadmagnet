@@ -2210,6 +2210,201 @@ p {
   margin: 0;
 }
 
+  align-items: center;
+  gap: 16px;
+}
+
+.flex-direction-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.gap-6 {
+  gap: 6px;
+}
+
+.gap-16 {
+  gap: 16px;
+}
+
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card-shadow {
+  box-shadow: 3px 3px 0px 0px var(--border-color) !important;
+}
+
+/* OCI Tracker Card */
+.oci-tracker-card {
+  box-shadow: 3px 3px 0px 0px var(--border-color);
+}
+
+/* 6. Expandable Reasoning Box */
+.btn-reasoning-toggle {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.btn-reasoning-toggle:hover {
+  color: var(--color-text-primary);
+  background-color: rgba(41, 41, 41, 0.04);
+}
+
+.reasoning-details {
+  border-left: 3px solid var(--color-accent) !important;
+  background-color: rgba(41, 41, 41, 0.015);
+  line-height: 1.6;
+}
+
+/* 7. Confidence vs. Infrastructure Gap Chart */
+.flex-bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bar-group {
+  width: 100%;
+}
+
+.bar-container-h {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.bar-fill-h {
+  height: 12px;
+  background-color: var(--color-accent);
+  border-radius: 1px;
+  transition: width 1s ease-in-out;
+}
+
+.bar-fill-h.bg-dark {
+  background-color: var(--color-text-primary);
+}
+
+/* Status Colors */
+.breakdown-score-metric.critical {
+  background-color: rgba(255, 117, 31, 0.08);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent-border);
+}
+
+.breakdown-score-metric.warning {
+  background-color: rgba(218, 165, 32, 0.08);
+  color: #B8860B;
+  border: 1px solid rgba(218, 165, 32, 0.2);
+}
+
+.breakdown-score-metric.healthy {
+  background-color: rgba(34, 139, 34, 0.08);
+  color: #228B22;
+  border: 1px solid rgba(34, 139, 34, 0.2);
+}
+
+/* Progress bar score colors */
+.breakdown-bar-fill.low-score {
+  background-color: var(--color-accent);
+}
+
+.breakdown-bar-fill.mid-score {
+  background-color: #DAB93E; /* Gold/Amber */
+}
+
+.breakdown-bar-fill.high-score {
+  background-color: #228B22; /* Forest Green */
+}
+
+/* 8. Recommendations Styling */
+.rec-priority-badge {
+  display: inline-block;
+  background-color: var(--color-text-primary);
+  color: #FFFFFF;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 2px;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+/* 9. Timeline Roadmap */
+.roadmap-phases {
+  position: relative;
+  padding-left: 12px;
+  border-left: 2px solid var(--border-light);
+  margin-top: 12px;
+}
+
+.roadmap-phase-item {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.roadmap-phase-item:last-child {
+  margin-bottom: 0;
+}
+
+.phase-num {
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  font-size: 0.7rem !important;
+  background-color: var(--color-text-primary);
+  color: #FFFFFF;
+  border-radius: var(--radius-technical);
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+/* Responsive Overrides */
+@media (max-width: 600px) {
+  .scale-buttons {
+    gap: 6px;
+  }
+  .scale-button {
+    font-size: 0.95rem;
+    padding: 10px 0;
+  }
+  .lock-banner-content {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .lock-banner-form {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .lock-btn {
+    width: 100% !important;
+  }
+}
+
+/* Funnel Navigation Buttons Row */
+.funnel-nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+  gap: 16px;
+  width: 100%;
+}
+
+.funnel-nav-buttons .btn-primary,
+.funnel-nav-buttons .btn-secondary {
+  flex: 1;
+  margin: 0;
+}
+
 @media (max-width: 480px) {
   .funnel-nav-buttons {
     flex-direction: column-reverse;
@@ -2217,5 +2412,60 @@ p {
   }
   .funnel-nav-buttons button {
     width: 100%;
+  }
+}
+
+/* Landing Page Honesty Line Container */
+.landing-honesty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto 36px auto;
+  padding: 18px 24px;
+  border-left: 2px dashed var(--color-accent);
+  border-right: 2px dashed var(--color-accent);
+  background-color: var(--color-accent-subtle);
+  border-radius: var(--radius-technical);
+  animation: honesty-pulse 4.5s ease-in-out infinite;
+}
+
+.landing-honesty-container .honesty-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.landing-honesty-container .honesty-line-main {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.landing-honesty-container .honesty-line-sub {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0;
+  line-height: 1.4;
+}
+
+@keyframes honesty-pulse {
+  0%, 100% {
+    opacity: 0.85;
+    transform: scale(1);
+    border-color: var(--color-accent);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+    border-color: var(--color-text-primary);
   }
 }

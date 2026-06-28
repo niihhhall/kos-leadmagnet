@@ -771,6 +771,13 @@ export default function App() {
               Score your practice across 6 operational areas. Get a root-cause breakdown of what your current setup costs you every month.
             </p>
 
+            {/* Landing Honesty Engine Card */}
+            <div className="landing-honesty-container">
+              <span className="honesty-eyebrow">[HONESTY LINE]</span>
+              <p className="honesty-line-main">Answer for where you are today, not where you're headed.</p>
+              <p className="honesty-line-sub">The gap between the two is exactly what this diagnostic surfaces.</p>
+            </div>
+
             {/* Animated score tease strip */}
             <div className="hero-score-tease">
               <div className="hero-score-tease-label">YOUR SCORE COULD BE</div>
