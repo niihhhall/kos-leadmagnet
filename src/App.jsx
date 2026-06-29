@@ -57,6 +57,50 @@ function ScoreTeaseTicker() {
   );
 }
 
+// Animated number ticker for stats bar
+function AnimatedNumber({ value, duration = 900 }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const end = parseInt(value, 10);
+    if (start === end) {
+      setCount(end);
+      return;
+    }
+
+    const incrementTime = Math.max(Math.floor(duration / end), 20);
+
+    const timer = setInterval(() => {
+      start += 1;
+      setCount(start);
+      if (start >= end) {
+        clearInterval(timer);
+      }
+    }, incrementTime);
+
+    return () => clearInterval(timer);
+  }, [value, duration]);
+
+  return <>{count}</>;
+}
+
+// Helpers to extract and format question labels dynamically from their IDs
+const getQuestionShortLabel = (qId) => {
+  const match = qId.match(/q(.+)$/);
+  if (!match) return '';
+  return match[1].replace('_', '.');
+};
+
+const getQuestionFullLabel = (qId) => {
+  return 'Q' + getQuestionShortLabel(qId);
+};
+
+const getQuestionContainerLabel = (qId) => {
+  const short = getQuestionShortLabel(qId);
+  return short.match(/^\d/) ? `0${short}` : short;
+};
+
 export default function App() {
   // Navigation & funnel states
   const [stage, setStage] = useState('landing'); // 'landing' | 'selector' | 'diagnostic' | 'reveal' | 'results'
@@ -95,6 +139,62 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [stage, currentSectionIndex]);
 
+  // Track which question is currently visible in the center of the viewport (Scroll Spy)
+  const [activeQuestionId, setActiveQuestionId] = useState(null);
+
+  useEffect(() => {
+    if (stage !== 'diagnostic') return;
+    
+    const handleScroll = () => {
+      const currentSection = sections[currentSectionIndex];
+      let closestQuestionId = null;
+      let minDistance = Infinity;
+      const viewportCenter = window.innerHeight / 2;
+      
+      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 20;
+      
+      if (isAtBottom && currentSection.questions.length > 0) {
+        closestQuestionId = currentSection.questions[currentSection.questions.length - 1].id;
+      } else {
+        for (let i = 0; i < currentSection.questions.length; i++) {
+          const q = currentSection.questions[i];
+          const el = document.getElementById(`q-container-${q.id}`);
+          if (!el) continue;
+          const rect = el.getBoundingClientRect();
+          // Calculate distance of container's center from viewport center
+          const containerCenter = rect.top + rect.height / 2;
+          const distance = Math.abs(containerCenter - viewportCenter);
+          
+          if (distance < minDistance) {
+            minDistance = distance;
+            closestQuestionId = q.id;
+          }
+        }
+      }
+      
+      // Default to first question if no elements found/measured
+      if (!closestQuestionId && currentSection.questions.length > 0) {
+        closestQuestionId = currentSection.questions[0].id;
+      }
+      
+      if (closestQuestionId) {
+        setActiveQuestionId(closestQuestionId);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleScroll);
+    
+    // Initial run with a small delay to let content render/settle
+    const initialTimeout = setTimeout(handleScroll, 100);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+      clearTimeout(initialTimeout);
+    };
+  }, [stage, currentSectionIndex, answers]);
+
   // Sync state to URL hash
   useEffect(() => {
     let expectedHash = '';
@@ -109,6 +209,14 @@ export default function App() {
     }
   }, [stage, currentSectionIndex]);
 
+  // Sync body class to current stage for styling
+  useEffect(() => {
+    document.body.className = `stage-${stage}`;
+    return () => {
+      document.body.className = '';
+    };
+  }, [stage]);
+
   // Listen for browser back/forward (hash changes)
   useEffect(() => {
     const handleHashChange = () => {
@@ -118,15 +226,30 @@ export default function App() {
       } else if (hash === '#/selector') {
         setStage('selector');
       } else if (hash.startsWith('#/diagnostic/')) {
-        const secNum = parseInt(hash.replace('#/diagnostic/', ''), 10);
-        if (secNum >= 1 && secNum <= 6) {
-          setStage('diagnostic');
-          setCurrentSectionIndex(secNum - 1);
+        if (!profession || !clientCount) {
+          setStage('selector');
+          window.location.hash = '#/selector';
+        } else {
+          const secNum = parseInt(hash.replace('#/diagnostic/', ''), 10);
+          if (secNum >= 1 && secNum <= 6) {
+            setStage('diagnostic');
+            setCurrentSectionIndex(secNum - 1);
+          }
         }
       } else if (hash === '#/reveal') {
-        setStage('reveal');
+        if (!profession || !clientCount) {
+          setStage('selector');
+          window.location.hash = '#/selector';
+        } else {
+          setStage('reveal');
+        }
       } else if (hash === '#/results') {
-        setStage('results');
+        if (!profession || !clientCount) {
+          setStage('selector');
+          window.location.hash = '#/selector';
+        } else {
+          setStage('results');
+        }
       }
     };
 
@@ -138,7 +261,7 @@ export default function App() {
     }
 
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [profession, clientCount]);
 
   // Score counter animation in reveal stage
   useEffect(() => {
@@ -152,7 +275,7 @@ export default function App() {
       }
       
       let start = 0;
-      const duration = 1500; // 1.5 seconds
+      const duration = 3200; // 3.2 seconds
       const stepTime = Math.max(Math.floor(duration / finalScore), 25);
       
       const timer = setInterval(() => {
@@ -160,8 +283,8 @@ export default function App() {
         setAnimatedScore(start);
         if (start >= finalScore) {
           clearInterval(timer);
-          setTimeout(() => setShowBand(true), 200);
-          setTimeout(() => setShowEmailGate(true), 600);
+          setTimeout(() => setShowBand(true), 300);
+          setTimeout(() => setShowEmailGate(true), 1500); // 1.5 seconds hold
         }
       }, stepTime);
 
@@ -739,17 +862,10 @@ export default function App() {
               Know where your business stands<br />across <span className="text-accent">6 areas</span> in <span className="text-accent">7 minutes</span>.
             </h1>
 
-            <p className="hero-lead hero-lead-v2">
-              Score your practice across 6 operational areas. Get a root-cause breakdown of what your current setup costs you every month.
-            </p>
-
-            {/* Animated score tease strip */}
-            <div className="hero-score-tease">
-              <div className="hero-score-tease-label">YOUR SCORE COULD BE</div>
-              <div className="hero-score-tease-numbers">
-                <ScoreTeaseTicker />
-              </div>
-              <div className="hero-score-tease-sub">out of 60, find out where you land</div>
+            {/* Landing Honesty Engine Card */}
+            <div className="landing-honesty-container">
+              <p className="honesty-line-main">Answer for where you are today, not where you're headed.</p>
+              <p className="honesty-line-sub">The gap between the two is exactly what this diagnostic surfaces.</p>
             </div>
 
             {/* CTA button with pulse ring */}
@@ -760,25 +876,47 @@ export default function App() {
                 onClick={() => setStage('selector')}
               >
                 <span>Find My Score</span>
-                <ArrowRight size={20} />
+                <ArrowRight size={24} />
               </button>
+            </div>
+
+            <p className="hero-lead hero-lead-v2">
+              Score your practice across 6 operational areas. Get a root-cause breakdown of what your current setup costs you every month.
+            </p>
+
+            {/* Animated score tease strip */}
+            <div className="hero-score-tease">
+              <div className="tease-left">
+                <div className="tease-main-text">Your score could be out of 60.</div>
+                <div className="tease-sub-text">Find out where you land.</div>
+              </div>
+              <div className="tease-divider" />
+              <div className="tease-right">
+                <ScoreTeaseTicker />
+              </div>
             </div>
 
             {/* 3-col stat bar */}
             <div className="hero-stat-bar">
               <div className="hero-stat-item">
-                <span className="hero-stat-number">6</span>
-                <span className="hero-stat-label">Areas Scored</span>
+                <span className="hero-stat-number">
+                  <AnimatedNumber value={6} />
+                </span>
+                <span className="hero-stat-label hero-stat-label-animate">Areas Scored</span>
               </div>
               <div className="hero-stat-divider" />
               <div className="hero-stat-item">
-                <span className="hero-stat-number">30</span>
-                <span className="hero-stat-label">Questions</span>
+                <span className="hero-stat-number">
+                  <AnimatedNumber value={30} />
+                </span>
+                <span className="hero-stat-label hero-stat-label-animate">Questions</span>
               </div>
               <div className="hero-stat-divider" />
               <div className="hero-stat-item">
-                <span className="hero-stat-number">7<span style={{fontSize:'0.9rem', fontWeight:700}}>min</span></span>
-                <span className="hero-stat-label">Avg. Time</span>
+                <span className="hero-stat-number">
+                  <AnimatedNumber value={7} /><span style={{fontSize:'0.9rem', fontWeight:700}}>min</span>
+                </span>
+                <span className="hero-stat-label hero-stat-label-animate">Avg. Time</span>
               </div>
             </div>
 
@@ -835,7 +973,6 @@ export default function App() {
               <h3 className="mb-12">How many active clients are you currently working with?</h3>
               <div className="option-grid option-grid-2x2">
                 {[
-                  { id: '1-2', label: '1 to 2 clients', desc: 'Focus on scaling foundation' },
                   { id: '3-4', label: '3 to 4 clients', desc: 'Facing capacity ceiling' },
                   { id: '5+', label: '5 or more clients', desc: 'Need active systems & records' }
                 ].map(c => (
@@ -887,7 +1024,7 @@ export default function App() {
 
         {/* STAGE 3: DIAGNOSTIC QUESTIONNAIRE */}
         {stage === 'diagnostic' && (
-          <div className="animate-slide-left">
+          <>
             {(() => {
               const currentSection = sections[currentSectionIndex];
               const answeredInSection = currentSection.questions.filter(q => {
@@ -898,168 +1035,240 @@ export default function App() {
               
               return (
                 <>
-                  <div className="progress-header">
-                    <div>
-                      <span className="progress-title-sub text-mono">[0{currentSectionIndex + 1}/06]</span>
-                      <h2 className="text-sm mt-4 m-0 uppercase font-semibold">
-                        {currentSection.name}
-                      </h2>
-                    </div>
-                    <div className="progress-score-live text-mono">
-                      LIVE SCORE: {sectionScore}/10
-                    </div>
-                  </div>
-
-                  <div className="progress-bar-track">
-                    <div 
-                      className="progress-bar-fill"
-                      style={{ width: `${((currentSectionIndex * 5 + Math.min(answeredInSection, 5)) / 30) * 100}%` }}
-                    ></div>
-                  </div>
-
-                  <div className="section-opener-text">
-                    <strong>Serious Operator Standard:</strong><br />
-                    {seriousOperatorBenchmarks[currentSection.id] ? (
-                      profession && seriousOperatorBenchmarks[currentSection.id][profession] 
-                        ? seriousOperatorBenchmarks[currentSection.id][profession] 
-                        : seriousOperatorBenchmarks[currentSection.id].general
-                    ) : ""}
-                  </div>
-
-                  {currentSection.questions.map((q, idx) => (
-                    <div key={q.id} className="question-container">
-                      <div className="question-text">
-                        <span className="question-num text-mono">
-                          [0{idx + 1}]
-                        </span>
-                        {q.text}
-                      </div>
-                      
-                      {q.type === 'choice' && (
-                        <div className="choices-stack">
-                          {q.options.map(option => (
-                            <button
-                              key={option.label}
-                              className={`choice-button ${answers[q.id] === option.label ? 'selected' : ''}`}
-                              onClick={() => handleSelectChoice(q.id, option.label)}
-                            >
-                              <span className="choice-badge">{option.label}</span>
-                              <span>{option.text}</span>
-                            </button>
-                          ))}
+                  {/* Sticky Right-Side Section Progress Tracker - Placed outside animate-slide-left for relative-to-viewport fixed positioning */}
+                  <div className="sticky-section-tracker">
+                    {currentSection.questions.map((q, idx) => {
+                      const isAnswered = q.type === 'checklist'
+                        ? (answers[q.id] && answers[q.id].length > 0)
+                        : (answers[q.id] !== undefined);
+                      const isActive = activeQuestionId === q.id;
+                      const qShortLabel = getQuestionShortLabel(q.id);
+                      const qFullLabel = getQuestionFullLabel(q.id);
+                      const isLongLabel = qShortLabel.length > 2;
+                      return (
+                        <div key={q.id} className="tracker-dot-wrapper">
+                          <button
+                            type="button"
+                            className={`tracker-dot ${isAnswered ? 'answered' : ''} ${isActive ? 'active' : ''} ${isLongLabel ? 'long-label' : ''}`}
+                            onClick={() => {
+                              const el = document.getElementById(`q-container-${q.id}`);
+                              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }}
+                          >
+                            {isAnswered ? "✓" : qShortLabel}
+                          </button>
+                          <span className="tracker-tooltip">
+                            {isAnswered ? `${qFullLabel}: Answered` : `${qFullLabel}: Pending`}
+                          </span>
                         </div>
-                      )}
+                      );
+                    })}
+                  </div>
 
-                      {q.type === 'scale' && (
-                        <div className="scale-container">
-                          <div className="scale-buttons">
-                            {[1, 2, 3, 4, 5].map(val => (
+                  <div className="animate-slide-left w-full">
+                    <div className="progress-header">
+                      <div>
+                        <span className="progress-title-sub text-mono">[0{currentSectionIndex + 1}/06]</span>
+                        <h2 className="text-sm mt-4 m-0 uppercase font-semibold">
+                          {currentSection.name}
+                        </h2>
+                      </div>
+                      <div className="progress-score-live text-mono">
+                        LIVE SCORE: {sectionScore}/10
+                      </div>
+                    </div>
+
+                    <div className="progress-bar-track">
+                      <div 
+                        className="progress-bar-fill"
+                        style={{ width: `${((currentSectionIndex * 5 + Math.min(answeredInSection, 5)) / 30) * 100}%` }}
+                      ></div>
+                    </div>
+
+                    <div className="section-opener-card">
+                      <div className="section-opener-content">
+                        <span className="section-opener-pill">[ Serious Operator Standard ]</span>
+                        <p className="section-opener-desc">
+                          {seriousOperatorBenchmarks[currentSection.id] ? (
+                            profession && seriousOperatorBenchmarks[currentSection.id][profession] 
+                              ? seriousOperatorBenchmarks[currentSection.id][profession] 
+                              : seriousOperatorBenchmarks[currentSection.id].general
+                          ) : ""}
+                        </p>
+                      </div>
+                    </div>
+
+                    {currentSection.questions.map((q, idx) => (
+                      <div key={q.id} id={`q-container-${q.id}`} className="question-container">
+                        <div className="question-text">
+                          <span className="question-num text-mono">
+                            [{getQuestionContainerLabel(q.id)}]
+                          </span>
+                          {q.text}
+                        </div>
+                        
+                        {q.type === 'choice' && (
+                          <div className="choices-stack">
+                            {q.options.map(option => (
                               <button
-                                type="button"
-                                key={val}
-                                className={`scale-button ${answers[q.id] === val ? 'selected' : ''}`}
-                                onClick={() => handleSelectChoice(q.id, val)}
+                                key={option.label}
+                                className={`choice-button ${answers[q.id] === option.label ? 'selected' : ''}`}
+                                onClick={() => handleSelectChoice(q.id, option.label)}
                               >
-                                {val}
+                                <span className="choice-badge">{option.label}</span>
+                                <span>{option.text}</span>
                               </button>
                             ))}
                           </div>
-                          <div className="scale-labels text-xs text-secondary mt-8">
-                            <span>1: Hard limit / memory-based</span>
-                            <span>5: Confident / one connected page</span>
-                          </div>
-                        </div>
-                      )}
+                        )}
 
-                      {q.type === 'checklist' && (
-                        <div className="checklist-container mt-12">
-                          <div className="checklist-grid">
-                            {q.options.map((option, oIdx) => {
-                              const isChecked = (answers[q.id] || []).includes(oIdx);
-                              return (
+                        {q.type === 'scale' && (
+                          <div className="scale-container">
+                            <div className="scale-buttons">
+                              {[1, 2, 3, 4, 5].map(val => (
                                 <button
                                   type="button"
-                                  key={oIdx}
-                                  className={`checklist-item-btn ${isChecked ? 'checked' : ''}`}
-                                  onClick={() => handleSelectChecklist(q.id, oIdx)}
+                                  key={val}
+                                  className={`scale-button ${answers[q.id] === val ? 'selected' : ''}`}
+                                  onClick={() => handleSelectChoice(q.id, val)}
                                 >
-                                  <div className={`checkbox-box ${isChecked ? 'checked' : ''}`}>
-                                    {isChecked && <Check size={14} className="checkbox-check" />}
-                                  </div>
-                                  <span className="checklist-item-text">{option.text}</span>
+                                  {val}
                                 </button>
-                              );
-                            })}
+                              ))}
+                            </div>
+                            <div className="scale-labels text-xs text-secondary mt-8">
+                              <span>1: Hard limit / memory-based</span>
+                              <span>5: Confident / one connected page</span>
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
 
-                      {q.id === 's5q6_5' && q.has_open_text && (answers[q.id] === 'A' || answers[q.id] === 'B') && (
-                        <div className="conditional-textarea mt-16 animate-fade-in">
-                          <label className="textarea-label text-sm font-semibold mb-6 block">
-                            {q.open_text_label}
-                          </label>
-                          <textarea
-                            className="textarea-input"
-                            placeholder="Setup time too high, template broke, too complex, got busy, etc..."
-                            value={answers['s5q6_5_text'] || ''}
-                            onChange={(e) => setAnswers(prev => ({ ...prev, s5q6_5_text: e.target.value }))}
-                            maxLength={500}
-                            rows={3}
-                          />
-                        </div>
-                      )}
+                        {q.type === 'checklist' && (
+                          <div className="checklist-container mt-12">
+                            <div className="checklist-grid">
+                              {q.options.map((option, oIdx) => {
+                                const isChecked = (answers[q.id] || []).includes(oIdx);
+                                return (
+                                  <button
+                                    type="button"
+                                    key={oIdx}
+                                    className={`checklist-item-btn ${isChecked ? 'checked' : ''}`}
+                                    onClick={() => handleSelectChecklist(q.id, oIdx)}
+                                  >
+                                    <div className={`checkbox-box ${isChecked ? 'checked' : ''}`}>
+                                      {isChecked && <Check size={14} className="checkbox-check" />}
+                                    </div>
+                                    <span className="checklist-item-text">{option.text}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
 
+                        {q.id === 's5q6_5' && q.has_open_text && (answers[q.id] === 'A' || answers[q.id] === 'B') && (
+                          <div className="conditional-textarea mt-16 animate-fade-in">
+                            <label className="textarea-label text-sm font-semibold mb-6 block">
+                              {q.open_text_label}
+                            </label>
+                            <textarea
+                              className="textarea-input"
+                              placeholder="Setup time too high, template broke, too complex, got busy, etc..."
+                              value={answers['s5q6_5_text'] || ''}
+                              onChange={(e) => setAnswers(prev => ({ ...prev, s5q6_5_text: e.target.value }))}
+                              maxLength={500}
+                              rows={3}
+                            />
+                          </div>
+                        )}
+
+                      </div>
+                    ))}
+
+                    {isSectionComplete(currentSection) && (
+                      <div className="section-bridge-container animate-fade-in">
+                        {currentSectionIndex === 1 && (
+                          <div className="micro-progress-hint text-xs text-accent text-mono mb-8 uppercase tracking-wider text-center" style={{ fontWeight: 'bold', letterSpacing: '0.05em' }}>
+                            You're 35% through. Section 3 takes about 90 seconds.
+                          </div>
+                        )}
+                        <p className="section-bridge-text" style={{ marginBottom: 0 }}>
+                          {currentSectionIndex === 0 && (
+                            <>
+                              You've been describing how you define and qualify what comes into your business.
+                              <br />
+                              The next section looks at how you manage what's already inside it.
+                            </>
+                          )}
+                          {currentSectionIndex === 1 && (
+                            <>
+                              You've been describing how your work gets organized and executed.
+                              <br />
+                              The next section looks at how your work gets found.
+                            </>
+                          )}
+                          {currentSectionIndex === 2 && (
+                            <>
+                              You've been describing your content.
+                              <br />
+                              The next section looks at what happens to the leads that content touches.
+                            </>
+                          )}
+                          {currentSectionIndex === 3 && (
+                            <>
+                              You've been describing how clients find you.
+                              <br />
+                              The next section looks at what happens once they're in.
+                            </>
+                          )}
+                          {currentSectionIndex === 4 && (
+                            <>
+                              Client systems scoped.
+                              <br />
+                              Finally, let's review your real-time financial controls.
+                            </>
+                          )}
+                          {currentSectionIndex === 5 && (
+                            <>
+                              Operational diagnostic complete.
+                              <br />
+                              Let's compute your total score.
+                            </>
+                          )}
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="funnel-nav-buttons mt-32">
+                      <button 
+                        type="button"
+                        className="btn-secondary"
+                        onClick={() => {
+                          if (currentSectionIndex === 0) {
+                            setStage('selector');
+                          } else {
+                            setCurrentSectionIndex(prev => prev - 1);
+                          }
+                        }}
+                      >
+                        <ArrowLeft size={16} />
+                        <span>Previous</span>
+                      </button>
+                      <button 
+                        type="button"
+                        className="btn-primary"
+                        disabled={!isSectionComplete(currentSection)}
+                        onClick={handleNextSection}
+                      >
+                        <span>{currentSectionIndex < 5 ? "Next Section" : "Compute Score"}</span>
+                        <ArrowRight size={16} />
+                      </button>
                     </div>
-                  ))}
-
-                  {isSectionComplete(currentSection) && (
-                    <div className="section-bridge-container animate-fade-in">
-                      {currentSectionIndex === 1 && (
-                        <div className="micro-progress-hint text-xs text-accent text-mono mb-8 uppercase tracking-wider" style={{ fontWeight: 'bold', letterSpacing: '0.05em' }}>
-                          You're 35% through. Section 3 takes about 90 seconds.
-                        </div>
-                      )}
-                      <p className="section-bridge-text" style={{ marginBottom: 0 }}>
-                        {currentSectionIndex === 0 && "You've been describing how you define and qualify what comes into your business. The next section looks at how you manage what's already inside it."}
-                        {currentSectionIndex === 1 && "You've been describing how your work gets organized and executed. The next section looks at how your work gets found."}
-                        {currentSectionIndex === 2 && "You've been describing your content. The next section looks at what happens to the leads that content touches."}
-                        {currentSectionIndex === 3 && "You've been describing how clients find you. The next section looks at what happens once they're in."}
-                        {currentSectionIndex === 4 && "Client systems scoped. Finally, let's review your real-time financial controls."}
-                        {currentSectionIndex === 5 && "Operational diagnostic complete. Let's compute your total score."}
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="funnel-nav-buttons mt-32">
-                    <button 
-                      type="button"
-                      className="btn-secondary"
-                      onClick={() => {
-                        if (currentSectionIndex === 0) {
-                          setStage('selector');
-                        } else {
-                          setCurrentSectionIndex(prev => prev - 1);
-                        }
-                      }}
-                    >
-                      <ArrowLeft size={16} />
-                      <span>Previous</span>
-                    </button>
-                    <button 
-                      type="button"
-                      className="btn-primary"
-                      disabled={!isSectionComplete(currentSection)}
-                      onClick={handleNextSection}
-                    >
-                      <span>{currentSectionIndex < 5 ? "Next Section" : "Compute Score"}</span>
-                      <ArrowRight size={16} />
-                    </button>
                   </div>
                 </>
               );
             })()}
-          </div>
+          </>
         )}
 
         {/* STAGE 4: SCORE REVEAL & EMAIL GATE */}
@@ -1072,6 +1281,30 @@ export default function App() {
               <div className="score-number">{animatedScore}</div>
               <div className="score-max">OUT OF 60</div>
             </div>
+
+            {!showEmailGate && (
+              (() => {
+                const finalScore = Math.round(calculateTotalScore());
+                return (
+                  <div className="reveal-loader-container">
+                    <div className="reveal-loader-bar-track">
+                      <div 
+                        className="reveal-loader-bar-fill" 
+                        style={{ width: `${finalScore > 0 ? (animatedScore / finalScore) * 100 : 100}%` }}
+                      ></div>
+                    </div>
+                    <div className="reveal-loader-status-text text-mono text-xs uppercase tracking-wider mt-12">
+                      {animatedScore < finalScore * 0.20 && "Initializing system audit..."}
+                      {animatedScore >= finalScore * 0.20 && animatedScore < finalScore * 0.40 && "Analyzing your diagnostic responses..."}
+                      {animatedScore >= finalScore * 0.40 && animatedScore < finalScore * 0.60 && "Benchmarking operational parameters..."}
+                      {animatedScore >= finalScore * 0.60 && animatedScore < finalScore * 0.80 && "Identifying systemic leakage points..."}
+                      {animatedScore >= finalScore * 0.80 && animatedScore < finalScore && "Compiling custom recommendations..."}
+                      {animatedScore === finalScore && "Calculations complete! Preparing your report..."}
+                    </div>
+                  </div>
+                );
+              })()
+            )}
 
             {showEmailGate && (
               <div className="animate-fade-in w-full">
@@ -1693,11 +1926,11 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="app-footer text-center py-32 mt-40 border-light border-top">
-        <div className="text-xs text-secondary">
+      <footer className="app-footer">
+        <div className="app-footer-copyright">
           &copy; {new Date().getFullYear()} KineticOS by Team Unik Builds. All rights reserved.
         </div>
-        <div className="text-xs text-muted mt-6">Built for freelance creative professionals prioritizing operational architecture.</div>
+        <div className="app-footer-tagline">Built for freelance creative professionals prioritizing operational architecture.</div>
       </footer>
     </div>
   );
