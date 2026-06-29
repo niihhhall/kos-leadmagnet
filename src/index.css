@@ -330,10 +330,55 @@ body.stage-landing::before {
 }
 
 .btn-hero-cta {
+  position: relative;
   width: 100%;
   font-size: 1.25rem;
   padding: 22px 44px;
   gap: 12px;
+  overflow: hidden; /* clip the sweeping shine ray */
+  animation: cta-glow 3s ease-in-out infinite;
+}
+
+/* Sweeping metallic shine beam */
+.btn-hero-cta::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -150%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  pointer-events: none;
+  animation: cta-shine 3s ease-in-out infinite;
+}
+
+@keyframes cta-glow {
+  0%, 80%, 100% {
+    box-shadow: var(--shadow-offset) var(--shadow-offset) 0px 0px var(--border-color);
+    background-color: var(--color-accent);
+  }
+  85%, 95% {
+    box-shadow: 
+      var(--shadow-offset) var(--shadow-offset) 0px 0px var(--border-color),
+      0 0 15px 4px var(--color-accent),
+      0 0 30px 8px #FFA866;
+    background-color: var(--color-accent-hover);
+  }
+}
+
+@keyframes cta-shine {
+  0%, 80% {
+    left: -150%;
+  }
+  100% {
+    left: 150%;
+  }
 }
 
 /* 3-col stat bar */
