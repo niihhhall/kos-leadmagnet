@@ -1926,12 +1926,14 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="app-footer">
-        <div className="app-footer-copyright">
-          &copy; {new Date().getFullYear()} KineticOS by Team Unik Builds. All rights reserved.
-        </div>
-        <div className="app-footer-tagline">Built for freelance creative professionals prioritizing operational architecture.</div>
-      </footer>
+      {stage === 'landing' && (
+        <footer className="app-footer">
+          <div className="app-footer-copyright">
+            &copy; {new Date().getFullYear()} KineticOS by Team Unik Builds. All rights reserved.
+          </div>
+          <div className="app-footer-tagline">Built for freelance creative professionals prioritizing operational architecture.</div>
+        </footer>
+      )}
     </div>
   );
 }
