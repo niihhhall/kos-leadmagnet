@@ -876,7 +876,7 @@ export default function App() {
                 onClick={() => setStage('selector')}
               >
                 <span>Find My Score</span>
-                <ArrowRight size={24} />
+                <ArrowRight size={28} />
               </button>
             </div>
 
@@ -884,39 +884,45 @@ export default function App() {
               Score your practice across 6 operational areas. Get a root-cause breakdown of what your current setup costs you every month.
             </p>
 
-            {/* Animated score tease strip */}
-            <div className="hero-score-tease">
-              <div className="tease-left">
-                <div className="tease-main-text">Your score could be out of 60.</div>
-                <div className="tease-sub-text">Find out where you land.</div>
-              </div>
-              <div className="tease-divider" />
-              <div className="tease-right">
-                <ScoreTeaseTicker />
-              </div>
-            </div>
+            {/* Empty space placeholder where the score tease used to be */}
+            <div className="hero-score-tease-placeholder" />
 
-            {/* 3-col stat bar */}
-            <div className="hero-stat-bar">
-              <div className="hero-stat-item">
-                <span className="hero-stat-number">
-                  <AnimatedNumber value={6} />
-                </span>
-                <span className="hero-stat-label hero-stat-label-animate">Areas Scored</span>
+            {/* Side-by-side Row container */}
+            <div className="hero-cards-row">
+              {/* Animated score tease strip */}
+              <div className="hero-score-tease">
+                <div className="tease-left">
+                  <div className="tease-main-text">Your score could be out of 60.</div>
+                  <div className="tease-sub-text">Find out where you land.</div>
+                </div>
+                <div className="tease-divider" />
+                <div className="tease-right">
+                  <ScoreTeaseTicker />
+                </div>
               </div>
-              <div className="hero-stat-divider" />
-              <div className="hero-stat-item">
-                <span className="hero-stat-number">
-                  <AnimatedNumber value={30} />
-                </span>
-                <span className="hero-stat-label hero-stat-label-animate">Questions</span>
-              </div>
-              <div className="hero-stat-divider" />
-              <div className="hero-stat-item">
-                <span className="hero-stat-number">
-                  <AnimatedNumber value={7} /><span style={{fontSize:'0.9rem', fontWeight:700}}>min</span>
-                </span>
-                <span className="hero-stat-label hero-stat-label-animate">Avg. Time</span>
+
+              {/* 3-col stat bar */}
+              <div className="hero-stat-bar">
+                <div className="hero-stat-item">
+                  <span className="hero-stat-number">
+                    <AnimatedNumber value={6} />
+                  </span>
+                  <span className="hero-stat-label hero-stat-label-animate">Areas Scored</span>
+                </div>
+                <div className="hero-stat-divider" />
+                <div className="hero-stat-item">
+                  <span className="hero-stat-number">
+                    <AnimatedNumber value={30} />
+                  </span>
+                  <span className="hero-stat-label hero-stat-label-animate">Questions</span>
+                </div>
+                <div className="hero-stat-divider" />
+                <div className="hero-stat-item">
+                  <span className="hero-stat-number">
+                    <AnimatedNumber value={7} /><span style={{fontSize:'0.9rem', fontWeight:700}}>min</span>
+                  </span>
+                  <span className="hero-stat-label hero-stat-label-animate">Avg. Time</span>
+                </div>
               </div>
             </div>
 
