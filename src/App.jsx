@@ -28,7 +28,8 @@ import {
   TrendingUp,
   ShieldAlert,
   Zap,
-  CheckSquare
+  CheckSquare,
+  X
 } from 'lucide-react';
 
 // Animated score ticker for landing page hero
@@ -2193,8 +2194,9 @@ export default function App() {
             <button 
               className="success-modal-close" 
               onClick={() => setShowSuccessPopup(false)}
+              aria-label="Close modal"
             >
-              &times;
+              <X size={16} />
             </button>
             <div className="success-modal-icon-wrap">
               <Mail size={32} />
@@ -2203,9 +2205,9 @@ export default function App() {
               Report Sent! 📩
             </h2>
             <p className="success-modal-text">
-              Aapki custom report humne bhej di hai! 
+              Your customized operational blueprint has been sent to your inbox.
               <br /><br />
-              Please check your inbox. Agar report na dikhe, toh ek baar <strong>Spam or Promotions</strong> folder zaroor check kar lena—kuch hi der mein report wahan pahunch jayegi.
+              Please check your inbox shortly. If you don't see it within 60 seconds, make sure to check your <strong>Spam or Promotions</strong> folder.
             </p>
             <button 
               className="btn-primary" 

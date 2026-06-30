@@ -3045,22 +3045,25 @@ p {
 
 .success-modal-close {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 18px;
+  right: 18px;
   background: none;
   border: none;
   cursor: pointer;
   color: var(--color-text-primary);
-  font-weight: 900;
-  font-size: 1.5rem;
   line-height: 1;
-  padding: 4px;
-  transition: color var(--transition-fast), transform var(--transition-fast);
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
 }
 
 .success-modal-close:hover {
+  background-color: var(--color-accent-subtle);
   color: var(--color-accent);
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .success-modal-icon-wrap {
