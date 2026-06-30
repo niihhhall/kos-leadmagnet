@@ -1536,7 +1536,7 @@ export default function App() {
                     onClick={handleSkipEmail}
                     disabled={isSubmittingEmail}
                   >
-                    Skip — just show my summary on screen
+                    Skip and show my summary on screen
                   </button>
 
                   <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border-light)' }}>

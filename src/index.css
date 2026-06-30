@@ -1221,20 +1221,22 @@ p {
 .skip-button-link {
   background: none;
   border: none;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
+  font-weight: 700;
   cursor: pointer;
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   text-decoration: underline;
   margin-top: 24px;
   padding: 10px 16px;
   display: inline-block;
-  transition: color var(--transition-fast);
+  transition: color var(--transition-fast), transform var(--transition-fast);
 }
 
 @media (hover: hover) {
   .skip-button-link:hover {
-    color: var(--color-text-primary);
+    color: var(--color-accent);
+    transform: scale(1.02);
   }
 }
 
