@@ -23,7 +23,10 @@ pnpm-debug.log*
 .idea/
 .DS_Store
 Thumbs.db
+.wrangler/
+.dev.vars
 
 # User Excluded Files
 docs/
 Star.svg
+
