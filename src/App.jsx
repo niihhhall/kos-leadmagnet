@@ -1447,7 +1447,7 @@ export default function App() {
                 <div className={`email-form-card ${emailFormFocus ? 'focus-active' : ''}`}>
                   <form onSubmit={handleEmailSubmit}>
                     <label className="email-label">
-                      Get Your Full Report — Sent to Your Inbox as a PDF
+                      Get Your Full Report
                     </label>
 
                     {/* Name row */}
