@@ -2204,11 +2204,26 @@ export default function App() {
             <h2 className="success-modal-title">
               Report Sent! 📩
             </h2>
-            <p className="success-modal-text">
+            <p className="success-modal-text" style={{ marginBottom: '16px' }}>
               Your customized operational blueprint has been sent to your inbox.
-              <br /><br />
-              Please check your inbox shortly. If you don't see it within 60 seconds, make sure to check your <strong>Spam or Promotions</strong> folder.
             </p>
+            <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', margin: '0 0 20px 0', fontWeight: '500' }}>
+              Please check your inbox shortly.
+            </p>
+            <div style={{
+              fontSize: '0.8rem',
+              color: 'var(--color-text-primary)',
+              backgroundColor: 'var(--color-accent-subtle)',
+              border: '1px solid var(--color-accent-border)',
+              padding: '12px 16px',
+              borderRadius: 'var(--radius-technical)',
+              marginBottom: '28px',
+              fontWeight: '600',
+              lineHeight: '1.5',
+              textAlign: 'left'
+            }}>
+              💡 If you don't see it within 60 seconds, please check your <strong>Spam or Promotions</strong> folder as automated emails sometimes land there.
+            </div>
             <button 
               className="btn-primary" 
               style={{ width: '100%' }}
