@@ -1,0 +1,13 @@
+# Local development secrets for Cloudflare Worker
+# Copy this file to .dev.vars and fill in your values
+# .dev.vars is gitignored — NEVER commit real keys
+
+FIREWORKS_API_KEY=fw_your_key_here
+ALLOWED_ORIGIN=http://localhost:5173
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+RESEND_API_KEY=re_your_resend_key
+RESEND_SENDER_EMAIL=KineticOS <onboarding@resend.dev>
+
+# Inngest — get these from https://app.inngest.com → Settings → API Keys
+INNGEST_EVENT_KEY=sde_your_event_key_here
+INNGEST_SIGNING_KEY=signkey-prod-your_signing_key_here

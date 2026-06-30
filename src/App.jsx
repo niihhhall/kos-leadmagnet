@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import posthog from 'posthog-js';
 import { 
   sections, 
   scoreBands, 
@@ -6,7 +7,7 @@ import {
   generatePatternParagraph,
   getCausalCopy
 } from './questions';
-import { submitLeadToESP } from './utils/esp';
+// esp.js mock retired — real submission in handleEmailSubmit below
 import { 
   ArrowRight, 
   ArrowLeft,
@@ -116,10 +117,16 @@ export default function App() {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   
   // Lead info
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [emailSubmitted, setEmailSubmitted] = useState(false);
   const [isSubmittingEmail, setIsSubmittingEmail] = useState(false);
   const [emailFormFocus, setEmailFormFocus] = useState(false);
+  const [emailError, setEmailError] = useState('');
+
+  // LLM-generated report (returned from CF Worker on submission)
+  const [generatedReport, setGeneratedReport] = useState(null);
 
   // Results calculator states (Cost of Chaos)
   const [avgFee, setAvgFee] = useState(2500);
@@ -133,6 +140,44 @@ export default function App() {
 
   // Expand/collapse logic for "View Reasoning" in results
   const [expandedReasoning, setExpandedReasoning] = useState({});
+
+  // ── PostHog: track funnel stage transitions ──────────────────────────────
+  useEffect(() => {
+    if (stage === 'selector') {
+      posthog.capture('funnel_started');
+    } else if (stage === 'diagnostic') {
+      posthog.capture('diagnostic_started', {
+        profession,
+        clientCount
+      });
+    } else if (stage === 'reveal') {
+      const score = calculateTotalScore();
+      posthog.capture('email_gate_viewed', {
+        score,
+        scoreBand: getScoreBand(score)?.name,
+        profession,
+        clientCount,
+        answers,
+        sectionScores: {
+          foundation:   calculateSectionScore('foundation'),
+          productivity: calculateSectionScore('productivity'),
+          content:      calculateSectionScore('content'),
+          marketing:    calculateSectionScore('marketing'),
+          client:       calculateSectionScore('client'),
+          finance:      calculateSectionScore('finance'),
+        }
+      });
+    } else if (stage === 'results') {
+      posthog.capture('results_viewed', {
+        score: calculateTotalScore(),
+        emailSubmitted,
+        profession,
+        clientCount,
+        answers
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage]);
 
   // Scroll to top on stage change or section transition
   useEffect(() => {
@@ -728,6 +773,12 @@ export default function App() {
       ...prev,
       [questionId]: value
     }));
+    posthog.capture('question_answered', {
+      questionId,
+      answerValue: value,
+      profession,
+      clientCount
+    });
   };
 
   const handleSelectChecklist = (questionId, optionIndex) => {
@@ -742,6 +793,12 @@ export default function App() {
       ...prev,
       [questionId]: newList
     }));
+    posthog.capture('question_answered', {
+      questionId,
+      answerValue: newList,
+      profession,
+      clientCount
+    });
   };
 
   const isSectionComplete = (section) => {
@@ -753,6 +810,16 @@ export default function App() {
   };
 
   const handleNextSection = () => {
+    const currentSection = sections[currentSectionIndex];
+    const sectionScore = calculateSectionScore(currentSection.id);
+    posthog.capture('section_completed', {
+      sectionId: currentSection.id,
+      sectionIndex: currentSectionIndex,
+      sectionScore,
+      profession,
+      clientCount
+    });
+
     if (currentSectionIndex < sections.length - 1) {
       setCurrentSectionIndex(prev => prev + 1);
     } else {
@@ -762,27 +829,74 @@ export default function App() {
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !email.includes('@')) return;
+    setEmailError('');
+    if (!firstName.trim()) { setEmailError('Please enter your first name.'); return; }
+    if (!email || !email.includes('@')) { setEmailError('Please enter a valid email address.'); return; }
 
     setIsSubmittingEmail(true);
+
+    // PostHog: identify the lead immediately (merges anonymous session)
+    posthog.identify(email, {
+      firstName: firstName.trim(),
+      lastName: lastName.trim() || undefined,
+      profession,
+      clientCount,
+      totalScore: calculateTotalScore(),
+    });
+    posthog.capture('lead_submitted', {
+      score: calculateTotalScore(),
+      profession,
+      hasLastName: Boolean(lastName.trim()),
+    });
+
     try {
-      await submitLeadToESP({
-        email,
-        score: calculateTotalScore(),
-        profession,
-        clientCount,
-        answers
+      const workerUrl = import.meta.env.VITE_CF_WORKER_URL || 'http://localhost:8787';
+      const response = await fetch(`${workerUrl}/generate-report`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: firstName.trim(),
+          lastName: lastName.trim() || '',
+          email: email.trim(),
+          profession,
+          clientCount,
+          score: calculateTotalScore(),
+          sectionScores: {
+            foundation:   calculateSectionScore('foundation'),
+            productivity: calculateSectionScore('productivity'),
+            content:      calculateSectionScore('content'),
+            marketing:    calculateSectionScore('marketing'),
+            client:       calculateSectionScore('client'),
+            finance:      calculateSectionScore('finance'),
+          },
+          answers,
+        }),
       });
+
+      if (!response.ok) throw new Error(`Worker error: ${response.status}`);
+
+      const report = await response.json();
+      setGeneratedReport(report);
       setEmailSubmitted(true);
       setStage('results');
+
+      posthog.capture('report_generated', {
+        riskLevel: report.riskLevel,
+        diagnosisLabel: report.primaryDiagnosis?.label,
+      });
+
     } catch (err) {
-      console.error("Failed to submit lead", err);
+      console.error('Failed to generate report:', err);
+      // Graceful fallback — still show results without LLM report
+      setEmailSubmitted(true);
+      setStage('results');
     } finally {
       setIsSubmittingEmail(false);
     }
   };
 
   const handleSkipEmail = () => {
+    posthog.capture('email_gate_skipped', { score: calculateTotalScore() });
     setEmailSubmitted(false);
     setStage('results');
   };
@@ -795,8 +909,12 @@ export default function App() {
     setCurrentSectionIndex(0);
     setProfession(null);
     setClientCount(null);
+    setFirstName('');
+    setLastName('');
     setEmail('');
+    setEmailError('');
     setEmailSubmitted(false);
+    setGeneratedReport(null);
     setStage('landing');
     setAnimatedScore(0);
     setShowBand(false);
@@ -1328,15 +1446,52 @@ export default function App() {
 
                 <div className={`email-form-card ${emailFormFocus ? 'focus-active' : ''}`}>
                   <form onSubmit={handleEmailSubmit}>
-                    <label className="email-label" htmlFor="email-input">
-                      Unlock Your Score Tier, Detailed Interpretation & Custom Recommendations
+                    <label className="email-label">
+                      Get Your Full Report — Sent to Your Inbox as a PDF
                     </label>
+
+                    {/* Name row */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                      <div>
+                        <label className="text-xs text-secondary" style={{ display: 'block', marginBottom: '6px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>First Name *</label>
+                        <input
+                          id="first-name-input"
+                          type="text"
+                          className="email-input"
+                          placeholder="Sarah"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          onFocus={() => setEmailFormFocus(true)}
+                          onBlur={() => setEmailFormFocus(false)}
+                          required
+                          disabled={isSubmittingEmail}
+                          style={{ marginBottom: 0 }}
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-secondary" style={{ display: 'block', marginBottom: '6px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Last Name</label>
+                        <input
+                          id="last-name-input"
+                          type="text"
+                          className="email-input"
+                          placeholder="Chen"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          onFocus={() => setEmailFormFocus(true)}
+                          onBlur={() => setEmailFormFocus(false)}
+                          disabled={isSubmittingEmail}
+                          style={{ marginBottom: 0 }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Email row + Submit */}
                     <div className="email-input-wrapper">
                       <input
                         id="email-input"
                         type="email"
                         className="email-input"
-                        placeholder="Enter your professional email"
+                        placeholder="your@email.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         onFocus={() => setEmailFormFocus(true)}
@@ -1347,21 +1502,33 @@ export default function App() {
                       <button 
                         type="submit" 
                         className="btn-primary flex-center-gap-2"
-                        disabled={isSubmittingEmail || !email.includes('@')}
+                        disabled={isSubmittingEmail || !email.includes('@') || !firstName.trim()}
                       >
                         {isSubmittingEmail ? (
                           <>
                             <RefreshCw className="animate-spin" size={18} />
-                            <span>Processing...</span>
+                            <span>Generating...</span>
                           </>
                         ) : (
                           <>
-                            <span>Unlock My Report</span>
+                            <span>Send My Report</span>
                             <ArrowRight size={16} />
                           </>
                         )}
                       </button>
                     </div>
+
+                    {/* Error message */}
+                    {emailError && (
+                      <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '8px', fontWeight: '600' }}>
+                        {emailError}
+                      </p>
+                    )}
+
+                    <p style={{ fontSize: '11px', color: 'var(--color-text-secondary)', marginTop: '10px', textAlign: 'center' }}>
+                      <Lock size={10} style={{ display: 'inline', marginRight: '4px' }} />
+                      Your PDF report will be sent within 60 seconds. No spam.
+                    </p>
                   </form>
                   
                   <button 
@@ -1369,7 +1536,7 @@ export default function App() {
                     onClick={handleSkipEmail}
                     disabled={isSubmittingEmail}
                   >
-                    I'll skip for now, just show my summary
+                    Skip — just show my summary on screen
                   </button>
 
                   <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border-light)' }}>

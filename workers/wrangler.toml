@@ -1,0 +1,27 @@
+name = "kos-diagnostic-api"
+main = "generate-report.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Production environment
+[env.production]
+name = "kos-diagnostic-api-production"
+
+# Secrets — set via: wrangler secret put <KEY>
+# FIREWORKS_API_KEY
+# ALLOWED_ORIGIN
+# SUPABASE_SERVICE_ROLE_KEY
+# RESEND_API_KEY
+# RESEND_SENDER_EMAIL
+# INNGEST_EVENT_KEY      — sde_... (Inngest event key)
+# INNGEST_SIGNING_KEY    — signkey-prod-... (Inngest signing key)
+
+# ── HOW TO DEPLOY ────────────────────────────────────────────────────────────
+# 1. Install Wrangler: npm install -g wrangler
+# 2. Login: wrangler login
+# 3. Set secrets:
+#      wrangler secret put FIREWORKS_API_KEY
+#      wrangler secret put N8N_WEBHOOK_URL
+#      wrangler secret put ALLOWED_ORIGIN
+# 4. Deploy: wrangler deploy
+# 5. Your worker URL will be: https://kos-diagnostic-api.{your-cf-subdomain}.workers.dev
