@@ -163,6 +163,7 @@ export default function App() {
   const [animatedScore, setAnimatedScore] = useState(0);
   const [showBand, setShowBand] = useState(false);
   const [showEmailGate, setShowEmailGate] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   // Expand/collapse logic for "View Reasoning" in results
   const [expandedReasoning, setExpandedReasoning] = useState({});
@@ -939,6 +940,7 @@ export default function App() {
       setGeneratedReport(report);
       setEmailSubmitted(true);
       setStage('results');
+      setShowSuccessPopup(true);
 
       posthog.capture('report_generated', {
         riskLevel: report.riskLevel,
@@ -993,6 +995,7 @@ export default function App() {
     setAnimatedScore(0);
     setShowBand(false);
     setShowEmailGate(false);
+    setShowSuccessPopup(false);
     setExpandedReasoning({});
   };
 
@@ -2182,6 +2185,37 @@ export default function App() {
           </div>
           <div className="app-footer-tagline">Built for freelance creative professionals prioritizing operational architecture.</div>
         </footer>
+      )}
+      {/* Success Popup Modal */}
+      {showSuccessPopup && (
+        <div className="success-modal-overlay">
+          <div className="success-modal-card">
+            <button 
+              className="success-modal-close" 
+              onClick={() => setShowSuccessPopup(false)}
+            >
+              &times;
+            </button>
+            <div className="success-modal-icon-wrap">
+              <Mail size={32} />
+            </div>
+            <h2 className="success-modal-title">
+              Report Sent! 📩
+            </h2>
+            <p className="success-modal-text">
+              Aapki custom report humne bhej di hai! 
+              <br /><br />
+              Please check your inbox. Agar report na dikhe, toh ek baar <strong>Spam or Promotions</strong> folder zaroor check kar lena—kuch hi der mein report wahan pahunch jayegi.
+            </p>
+            <button 
+              className="btn-primary" 
+              style={{ width: '100%' }}
+              onClick={() => setShowSuccessPopup(false)}
+            >
+              View My Scorecard
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

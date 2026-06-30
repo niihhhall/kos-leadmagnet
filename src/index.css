@@ -3012,3 +3012,103 @@ p {
     display: none;
   }
 }
+
+/* ── Success Popup Modal Overlay & Card ────────────────────────────────────── */
+.success-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(41, 41, 41, 0.7);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  backdrop-filter: blur(4px);
+  animation: modalFadeIn 0.2s ease-out forwards;
+}
+
+.success-modal-card {
+  max-width: 460px;
+  width: 100%;
+  background-color: var(--color-bg-primary);
+  border: var(--border-width) var(--border-style) var(--color-text-primary);
+  padding: 36px 32px 32px 32px;
+  border-radius: var(--radius-technical);
+  box-shadow: 8px 8px 0px 0px var(--color-text-primary);
+  position: relative;
+  text-align: center;
+  animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.success-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  font-weight: 900;
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 4px;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.success-modal-close:hover {
+  color: var(--color-accent);
+  transform: scale(1.1);
+}
+
+.success-modal-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--color-accent-subtle);
+  border: 2px solid var(--color-accent);
+  color: var(--color-accent);
+  margin-bottom: 20px;
+  margin: 0 auto 20px auto;
+}
+
+.success-modal-title {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: var(--color-text-primary);
+}
+
+.success-modal-text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin-top: 0;
+  margin-bottom: 24px;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
