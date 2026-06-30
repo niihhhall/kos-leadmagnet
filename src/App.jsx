@@ -2220,7 +2220,7 @@ export default function App() {
               marginBottom: '28px',
               fontWeight: '600',
               lineHeight: '1.5',
-              textAlign: 'left'
+              textAlign: 'center'
             }}>
               💡 If you don't see it within 60 seconds, please check your <strong>Spam or Promotions</strong> folder as automated emails sometimes land there.
             </div>
