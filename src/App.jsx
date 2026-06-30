@@ -1532,9 +1532,11 @@ export default function App() {
                   </form>
                   
                   <button 
-                    className="skip-button-link"
+                    type="button"
+                    className="btn-secondary"
                     onClick={handleSkipEmail}
                     disabled={isSubmittingEmail}
+                    style={{ width: '100%', marginTop: '20px' }}
                   >
                     Skip and show my summary on screen
                   </button>
