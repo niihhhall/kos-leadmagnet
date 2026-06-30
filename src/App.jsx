@@ -1527,7 +1527,7 @@ export default function App() {
 
                     <p style={{ fontSize: '11px', color: 'var(--color-text-secondary)', marginTop: '10px', textAlign: 'center' }}>
                       <Lock size={10} style={{ display: 'inline', marginRight: '4px' }} />
-                      Your PDF report will be sent within 60 seconds. No spam.
+                      Your PDF report will be sent within 60 seconds.
                     </p>
                   </form>
                   
