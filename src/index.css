@@ -69,7 +69,8 @@ body {
 }
 
 /* Stage-specific backgrounds */
-body.stage-landing {
+body.stage-landing,
+body.stage-reveal {
   background-image: url('/landing-bg.png');
   background-size: cover;
   background-position: center bottom;
