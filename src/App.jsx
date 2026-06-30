@@ -104,34 +104,60 @@ const getQuestionContainerLabel = (qId) => {
 
 export default function App() {
   // Navigation & funnel states
-  const [stage, setStage] = useState('landing'); // 'landing' | 'selector' | 'diagnostic' | 'reveal' | 'results'
-  const [profession, setProfession] = useState(null); // 'designer' | 'marketer' | 'writer' | 'other'
-  const [clientCount, setClientCount] = useState(null); // '1-2' | '3-4' | '5+'
+  const [stage, setStage] = useState(() => localStorage.getItem('kos_stage') || 'landing');
+  const [profession, setProfession] = useState(() => localStorage.getItem('kos_profession') || null);
+  const [clientCount, setClientCount] = useState(() => localStorage.getItem('kos_clientCount') || null);
   
   // Answers state: { qId: answer_value }
   // Standard choice: 'A' | 'B' | 'C'
   // Scale (s5q2a): 1 | 2 | 3 | 4 | 5
   // Checklist (s5q5, s6q5): array of indices e.g. [0, 2]
   // Open text (s5q6_5_text): string
-  const [answers, setAnswers] = useState({});
-  const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
+  const [answers, setAnswers] = useState(() => {
+    try {
+      const saved = localStorage.getItem('kos_answers');
+      return saved ? JSON.parse(saved) : { s5q5: [], s6q5: [] };
+    } catch {
+      return { s5q5: [], s6q5: [] };
+    }
+  });
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(() => {
+    const saved = localStorage.getItem('kos_currentSectionIndex');
+    return saved ? Number(saved) : 0;
+  });
   
   // Lead info
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [emailSubmitted, setEmailSubmitted] = useState(false);
+  const [firstName, setFirstName] = useState(() => localStorage.getItem('kos_firstName') || '');
+  const [lastName, setLastName] = useState(() => localStorage.getItem('kos_lastName') || '');
+  const [email, setEmail] = useState(() => localStorage.getItem('kos_email') || '');
+  const [emailSubmitted, setEmailSubmitted] = useState(() => localStorage.getItem('kos_emailSubmitted') === 'true');
   const [isSubmittingEmail, setIsSubmittingEmail] = useState(false);
   const [emailFormFocus, setEmailFormFocus] = useState(false);
   const [emailError, setEmailError] = useState('');
 
   // LLM-generated report (returned from CF Worker on submission)
-  const [generatedReport, setGeneratedReport] = useState(null);
+  const [generatedReport, setGeneratedReport] = useState(() => {
+    try {
+      const saved = localStorage.getItem('kos_generatedReport');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
 
   // Results calculator states (Cost of Chaos)
-  const [avgFee, setAvgFee] = useState(2500);
-  const [activeClientsNum, setActiveClientsNum] = useState(4);
-  const [scopeCreepPercent, setScopeCreepPercent] = useState(20);
+  const [avgFee, setAvgFee] = useState(() => {
+    const saved = localStorage.getItem('kos_avgFee');
+    return saved ? Number(saved) : 2500;
+  });
+  const [activeClientsNum, setActiveClientsNum] = useState(() => {
+    const saved = localStorage.getItem('kos_activeClientsNum');
+    return saved ? Number(saved) : 4;
+  });
+  const [scopeCreepPercent, setScopeCreepPercent] = useState(() => {
+    const saved = localStorage.getItem('kos_scopeCreepPercent');
+    return saved ? Number(saved) : 20;
+  });
 
   // Score reveal animation states
   const [animatedScore, setAnimatedScore] = useState(0);
@@ -178,6 +204,40 @@ export default function App() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage]);
+
+  // ── LocalStorage: Sync State on Changes ──────────────────────────────────
+  useEffect(() => {
+    localStorage.setItem('kos_stage', stage);
+    if (profession) {
+      localStorage.setItem('kos_profession', profession);
+    } else {
+      localStorage.removeItem('kos_profession');
+    }
+    if (clientCount) {
+      localStorage.setItem('kos_clientCount', clientCount);
+    } else {
+      localStorage.removeItem('kos_clientCount');
+    }
+    localStorage.setItem('kos_answers', JSON.stringify(answers));
+    localStorage.setItem('kos_currentSectionIndex', String(currentSectionIndex));
+    localStorage.setItem('kos_firstName', firstName);
+    localStorage.setItem('kos_lastName', lastName);
+    localStorage.setItem('kos_email', email);
+    localStorage.setItem('kos_emailSubmitted', String(emailSubmitted));
+    localStorage.setItem('kos_avgFee', String(avgFee));
+    localStorage.setItem('kos_activeClientsNum', String(activeClientsNum));
+    localStorage.setItem('kos_scopeCreepPercent', String(scopeCreepPercent));
+    if (generatedReport) {
+      localStorage.setItem('kos_generatedReport', JSON.stringify(generatedReport));
+    } else {
+      localStorage.removeItem('kos_generatedReport');
+    }
+  }, [
+    stage, profession, clientCount, answers, currentSectionIndex,
+    firstName, lastName, email, emailSubmitted, avgFee,
+    activeClientsNum, scopeCreepPercent, generatedReport
+  ]);
+
 
   // Scroll to top on stage change or section transition
   useEffect(() => {
@@ -902,6 +962,20 @@ export default function App() {
   };
 
   const resetFunnel = () => {
+    localStorage.removeItem('kos_stage');
+    localStorage.removeItem('kos_profession');
+    localStorage.removeItem('kos_clientCount');
+    localStorage.removeItem('kos_answers');
+    localStorage.removeItem('kos_currentSectionIndex');
+    localStorage.removeItem('kos_firstName');
+    localStorage.removeItem('kos_lastName');
+    localStorage.removeItem('kos_email');
+    localStorage.removeItem('kos_emailSubmitted');
+    localStorage.removeItem('kos_generatedReport');
+    localStorage.removeItem('kos_avgFee');
+    localStorage.removeItem('kos_activeClientsNum');
+    localStorage.removeItem('kos_scopeCreepPercent');
+
     setAnswers({
       s5q5: [],
       s6q5: []
