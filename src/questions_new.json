@@ -1,4 +1,4 @@
-export const sections = [
+[
   {
     "id": "foundation",
     "name": "Business Foundation & Strategy",
@@ -10,7 +10,7 @@ export const sections = [
         "options": [
           {
             "value": 0,
-            "text": "I ask questions about their goals, timeline, and budget to learn what I need. The fit becomes clear through the conversation.",
+            "text": "I ask questions about their goals, timeline, and budget to learn what I need — the fit becomes clear through the conversation.",
             "label": "A"
           },
           {
@@ -20,14 +20,14 @@ export const sections = [
           },
           {
             "value": 2,
-            "text": "I send them through a defined intake process: a document or set of criteria that tells me quickly whether we're a match.",
+            "text": "I send them through a defined intake process — a document or set of criteria that tells me quickly whether we're a match.",
             "label": "C"
           }
         ]
       },
       {
         "id": "s1q2",
-        "text": "When a prospect asks \"what do you actually charge for this kind of project?\" Where does your answer come from?",
+        "text": "When a prospect asks *\"what do you actually charge for this kind of project?\"* — where does your answer come from?",
         "type": "choice",
         "options": [
           {
@@ -37,7 +37,7 @@ export const sections = [
           },
           {
             "value": 1,
-            "text": "From my experience with similar projects. I have a sense of my market rate that I adapt based on the specifics.",
+            "text": "From my experience with similar projects — I have a sense of my market rate that I adapt based on the specifics.",
             "label": "B"
           },
           {
@@ -49,12 +49,12 @@ export const sections = [
       },
       {
         "id": "s1q3",
-        "text": "The last time a prospect asked for your rates and process, how did you actually respond?",
+        "text": "The last time a prospect asked for your rates and process — how did you actually respond?",
         "type": "choice",
         "options": [
           {
             "value": 0,
-            "text": "I walked them through it on the call. That conversation is where the offer gets defined for their specific situation.",
+            "text": "I walked them through it on the call — that conversation is where the offer gets defined for their specific situation.",
             "label": "A"
           },
           {
@@ -71,12 +71,12 @@ export const sections = [
       },
       {
         "id": "s1q4",
-        "text": "If a referral partner asked \"why should I send someone your way instead of the other three people I know who do similar work?\" Where would your answer come from?",
+        "text": "If a referral partner asked *\"why should I send someone your way instead of the other three people I know who do similar work?\"* — where would your answer come from?",
         "type": "choice",
         "options": [
           {
             "value": 0,
-            "text": "From what I know about my own work. I'd explain what makes my approach different based on what I've seen work for clients.",
+            "text": "From what I know about my own work — I'd explain what makes my approach different based on what I've seen work for clients.",
             "label": "A"
           },
           {
@@ -86,7 +86,7 @@ export const sections = [
           },
           {
             "value": 2,
-            "text": "From a written statement I've built specifically for this: specific, consistent, the same every time I use it.",
+            "text": "From a written statement I've built specifically for this — specific, consistent, the same every time I use it.",
             "label": "C"
           }
         ]
@@ -98,7 +98,7 @@ export const sections = [
         "options": [
           {
             "value": 0,
-            "text": "Early on. There was usually a signal in the first conversation, but I made a call to move forward and managed it.",
+            "text": "Early on — there was usually a signal in the first conversation — but I made a call to move forward and managed it.",
             "label": "A"
           },
           {
@@ -121,7 +121,7 @@ export const sections = [
     "questions": [
       {
         "id": "s2q1",
-        "text": "When a task comes in from a client, a revision, a new deliverable, a quick thing: what happens to it?",
+        "text": "When a task comes in from a client — a revision, a new deliverable, a *\"quick thing\"* — what happens to it?",
         "type": "choice",
         "options": [
           {
@@ -131,7 +131,7 @@ export const sections = [
           },
           {
             "value": 1,
-            "text": "I note it somewhere, in the email thread, a sticky note, or a notes app, and try to action it before it falls through.",
+            "text": "I note it somewhere — in the email thread, a sticky note, or a notes app — and try to action it before it falls through.",
             "label": "B"
           },
           {
@@ -143,7 +143,7 @@ export const sections = [
       },
       {
         "id": "s2q2",
-        "text": "If I asked you right now to list every open deliverable for your most active client, where would that answer come from?",
+        "text": "If I asked you right now to list every open deliverable for your most active client — where would that answer come from?",
         "type": "choice",
         "options": [
           {
@@ -165,7 +165,7 @@ export const sections = [
       },
       {
         "id": "s2q3",
-        "text": "On a typical Monday morning, after a weekend where clients may have emailed, decisions may have been made, things may have moved: how long before you have an accurate, complete picture of where every active client stands?",
+        "text": "On a typical Monday morning — after a weekend where clients may have emailed, decisions may have been made, things may have moved — how long before you have an accurate, complete picture of where every active client stands?",
         "type": "choice",
         "options": [
           {
@@ -175,24 +175,24 @@ export const sections = [
           },
           {
             "value": 1,
-            "text": "15 to 20 minutes. Once I've gone through email and messages I usually have what I need.",
+            "text": "15–20 minutes — once I've gone through email and messages I usually have what I need.",
             "label": "B"
           },
           {
             "value": 2,
-            "text": "Almost immediately. I have something that shows me the current state before I open a single message.",
+            "text": "Almost immediately — I have something that shows me the current state before I open a single message.",
             "label": "C"
           }
         ]
       },
       {
         "id": "s2q4",
-        "text": "When you sit down to work on a typical morning, before you've acted on anything yet: how do you actually know what to work on first across all your active clients?",
+        "text": "When you sit down to work on a typical morning — before you've acted on anything yet — how do you actually know what to work on first across all your active clients?",
         "type": "choice",
         "options": [
           {
             "value": 0,
-            "text": "I work through what's in front of me: most urgent email, most recent message, whatever's been waiting longest.",
+            "text": "I work through what's in front of me — most urgent email, most recent message, whatever's been waiting longest.",
             "label": "A"
           },
           {
@@ -247,7 +247,7 @@ export const sections = [
           },
           {
             "value": 1,
-            "text": "Mostly my client workload: light weeks I posted more, heavy weeks I didn't.",
+            "text": "Mostly my client workload — light weeks I posted more, heavy weeks I didn't.",
             "label": "B"
           },
           {
@@ -269,7 +269,7 @@ export const sections = [
           },
           {
             "value": 1,
-            "text": "How busy I was with client work: heavier client weeks usually meant content stopped, not just slowed.",
+            "text": "How busy I was with client work — heavier client weeks usually meant content stopped, not just slowed.",
             "label": "B"
           },
           {
@@ -291,7 +291,7 @@ export const sections = [
           },
           {
             "value": 1,
-            "text": "I had a strong feeling the content helped. Some people mentioned specific posts, but I couldn't measure how much.",
+            "text": "I had a strong feeling the content helped — some people mentioned specific posts — but I couldn't measure how much.",
             "label": "B"
           },
           {
@@ -303,17 +303,17 @@ export const sections = [
       },
       {
         "id": "s3q4",
-        "text": "The last time you published a piece of content that got strong engagement, did you publish more in that direction afterward?",
+        "text": "The last time you published a piece of content that got strong engagement — did you publish more in that direction afterward?",
         "type": "choice",
         "options": [
           {
             "value": 0,
-            "text": "Not specifically. I noticed the engagement but the next piece came from something different that came up.",
+            "text": "Not specifically — I noticed the engagement but the next piece came from something different that came up.",
             "label": "A"
           },
           {
             "value": 1,
-            "text": "I tried to. I made a note about it but didn't have a systematic way to follow through.",
+            "text": "I tried to — I made a note about it but didn't have a systematic way to follow through.",
             "label": "B"
           },
           {
@@ -325,7 +325,7 @@ export const sections = [
       },
       {
         "id": "s3q5",
-        "text": "In your last slow month for new client inquiries, did you increase your content output, and if you did, did it make a measurable difference?",
+        "text": "In your last slow month for new client inquiries, did you increase your content output — and if you did, did it make a measurable difference?",
         "type": "choice",
         "options": [
           {
@@ -353,17 +353,17 @@ export const sections = [
     "questions": [
       {
         "id": "s4q1",
-        "text": "Right now, if someone asked you how many potential clients you're actively in conversations with, how would you answer?",
+        "text": "Right now, if someone asked you how many potential clients you're actively in conversations with — how would you answer?",
         "type": "choice",
         "options": [
           {
             "value": 0,
-            "text": "From memory: I'd give them a number and maybe check a couple of recent threads to make sure I'm not forgetting anyone.",
+            "text": "From memory — I'd give them a number and maybe check a couple of recent threads to make sure I'm not forgetting anyone.",
             "label": "A"
           },
           {
             "value": 1,
-            "text": "I know roughly: the active ones are the people I'm currently emailing or talking to.",
+            "text": "I know roughly — the active ones are the people I'm currently emailing or talking to.",
             "label": "B"
           },
           {
@@ -380,7 +380,7 @@ export const sections = [
         "options": [
           {
             "value": 0,
-            "text": "Something about them felt like a natural fit: their work, their profile, a mutual connection.",
+            "text": "Something about them felt like a natural fit — their work, their profile, a mutual connection.",
             "label": "A"
           },
           {
@@ -397,39 +397,39 @@ export const sections = [
       },
       {
         "id": "s4q3",
-        "text": "Your last closed client, if someone asked right now how they found you, what would you say?",
+        "text": "Your last closed client — if someone asked right now how they found you, what would you say?",
         "type": "choice",
         "options": [
           {
             "value": 0,
-            "text": "What they told me in conversation: they mentioned it and I remember it.",
+            "text": "What they told me in conversation — they mentioned it and I remember it.",
             "label": "A"
           },
           {
             "value": 1,
-            "text": "My best guess: I'm fairly sure I know but I didn't write it down.",
+            "text": "My best guess — I'm fairly sure I know but I didn't write it down.",
             "label": "B"
           },
           {
             "value": 2,
-            "text": "What's in my pipeline: I log where clients come from so I can verify it.",
+            "text": "What's in my pipeline — I log where clients come from so I can verify it.",
             "label": "C"
           }
         ]
       },
       {
         "id": "s4q4",
-        "text": "When you think about which channels have consistently brought you clients, how well do you actually understand which ones are working?",
+        "text": "When you think about which channels have consistently brought you clients — how well do you actually understand which ones are working?",
         "type": "choice",
         "options": [
           {
             "value": 0,
-            "text": "I have a general sense (referrals, content, direct outreach) but the specifics across channels aren't something I've measured.",
+            "text": "I have a general sense — referrals, content, direct outreach — but the specifics across channels aren't something I've measured.",
             "label": "A"
           },
           {
             "value": 1,
-            "text": "I've noticed that most clients seem to come through referrals, and maybe one other channel seems active, but I couldn't break it down further or verify it.",
+            "text": "I've noticed that most clients seem to come through referrals, and maybe one other channel seems active — but I couldn't break it down further or verify it.",
             "label": "B"
           },
           {
@@ -441,7 +441,7 @@ export const sections = [
       },
       {
         "id": "s4q5",
-        "text": "When you're in a quiet period for new client inquiries, how do you decide what to do about it?",
+        "text": "When you're in a quiet period for new client inquiries — how do you decide what to do about it?",
         "type": "choice",
         "options": [
           {
@@ -469,7 +469,7 @@ export const sections = [
     "questions": [
       {
         "id": "s5q1",
-        "text": "For your most active client right now, if you needed to get completely current before a call in 30 minutes, where would you go first?",
+        "text": "For your most active client right now — if you needed to get completely current before a call in 30 minutes, where would you go first?",
         "type": "choice",
         "options": [
           {
@@ -479,7 +479,7 @@ export const sections = [
           },
           {
             "value": 1,
-            "text": "A combination of places: email, a file I have somewhere, and memory to fill the gaps.",
+            "text": "A combination of places — email, a file I have somewhere, and memory to fill the gaps.",
             "label": "B"
           },
           {
@@ -491,18 +491,18 @@ export const sections = [
       },
       {
         "id": "s5q2a",
-        "text": "How confident are you that you could give any active client a complete, accurate project status update within 10 minutes, without asking them to remind you of any details?",
+        "text": "How confident are you that you could give any active client a complete, accurate project status update within 10 minutes — without asking them to remind you of any details?",
         "type": "scale",
         "options": [
           {
             "type": "scale",
-            "text": "*(1 = Not at all confident, 5 = Completely confident)*"
+            "text": "*(1 = Not at all confident —— 5 = Completely confident)*"
           }
         ]
       },
       {
         "id": "s5q2b",
-        "text": "The last time a client asked for a project status update, what did that experience actually reveal about how your client records work?",
+        "text": "The last time a client asked for a project status update — what did that experience actually reveal about how your client records work?",
         "type": "choice",
         "options": [
           {
@@ -546,7 +546,7 @@ export const sections = [
       },
       {
         "id": "s5q3_5",
-        "text": "There are two ways a client operation can work. In one, you are the connection between all the parts: you carry information from email to tracker to invoice to memory. In the other, the parts connect to each other, and an update in one place flows through automatically. Which one describes your client operation right now?",
+        "text": "There are two ways a client operation can work. In one, **you are the connection between all the parts** — you carry information from email to tracker to invoice to memory. In the other, **the parts connect to each other**, and an update in one place flows through automatically. Which one describes your client operation right now?",
         "type": "choice",
         "options": [
           {
@@ -556,19 +556,19 @@ export const sections = [
           },
           {
             "value": 1,
-            "text": "Somewhere between: I have some structure but I'm still the one maintaining most of the connections manually.",
+            "text": "Somewhere between — I have some structure but I'm still the one maintaining most of the connections manually.",
             "label": "B"
           },
           {
             "value": 2,
-            "text": "The second one. Updates flow. I don't maintain the connection, the record does.",
+            "text": "The second one. Updates flow. I don't maintain the connection — the record does.",
             "label": "C"
           }
         ]
       },
       {
         "id": "s5q4",
-        "text": "If your most active client emailed right now asking for a full rundown of where every deliverable stands and what they've paid so far, how long would it take you to send an accurate reply?",
+        "text": "If your most active client emailed right now asking for a full rundown of where every deliverable stands and what they've paid so far — how long would it take you to send an accurate reply?",
         "type": "choice",
         "options": [
           {
@@ -590,7 +590,7 @@ export const sections = [
       },
       {
         "id": "s5q5",
-        "text": "For your active clients right now, which of the following currently exist in one connected location? (Select all that apply)",
+        "text": "For your active clients right now — which of the following currently exist in one connected location? *(Select all that apply)*",
         "type": "checklist",
         "options": [
           {
@@ -615,7 +615,7 @@ export const sections = [
       },
       {
         "id": "s5q6",
-        "text": "Here is what Monday morning looks like for an operator with a connected client record.\nA client emails at 9:03am asking for a complete update: where every deliverable stands, what's been approved, what's still outstanding, and what they owe.\nThe operator opens one page. The client's name is at the top. Directly below it: the scope they signed off on in week one. A tracker showing each deliverable (approved, in-progress, or outstanding). The invoice from three weeks ago, flagged because payment hasn't arrived yet. A note from last Thursday's call: \"Client asked for one more revision on the brand mark before final approval.\"\nThe operator reads for 90 seconds. Sends a complete, accurate reply at 9:07am.\nNow place your most active client there. Last Monday.\nIf that same email had arrived, how would your next 30 minutes have looked?",
+        "text": "Here is what Monday morning looks like for an operator with a connected client record.\nA client emails at 9:03am asking for a complete update: where every deliverable stands, what's been approved, what's still outstanding, and what they owe.\nThe operator opens one page. The client's name is at the top. Directly below it: the scope they signed off on in week one. A tracker showing each deliverable — approved, in-progress, or outstanding. The invoice from three weeks ago, flagged because payment hasn't arrived yet. A note from last Thursday's call: *\"Client asked for one more revision on the brand mark before final approval.\"*\nThe operator reads for 90 seconds. Sends a complete, accurate reply at 9:07am.\nNow place your most active client there. Last Monday.\n**If that same email had arrived — how would your next 30 minutes have looked?**",
         "type": "choice",
         "options": [
           {
@@ -637,7 +637,7 @@ export const sections = [
       },
       {
         "id": "s5q6_5",
-        "text": "Of the components you just identified as not currently in one connected location, have you had a version of this organized before, in any tool or template, even if you stopped using it?",
+        "text": "Of the components you just identified as not currently in one connected location — have you had a version of this organized before, in any tool or template, even if you stopped using it?",
         "type": "choice",
         "options": [
           {
@@ -652,12 +652,12 @@ export const sections = [
           },
           {
             "value": 2,
-            "text": "No, this kind of connected record would be new territory for me.",
+            "text": "No — this kind of connected record would be new territory for me.",
             "label": "C"
           }
         ],
         "has_open_text": true,
-        "open_text_label": "If you selected A or B, in a few words, what do you think made it stop working?"
+        "open_text_label": "If you selected A or B — in a few words, what do you think made it stop working?"
       }
     ]
   },
@@ -667,7 +667,7 @@ export const sections = [
     "questions": [
       {
         "id": "s6q1",
-        "text": "When a new client engagement starts and the scope is being defined, where does your pricing come from?",
+        "text": "When a new client engagement starts and the scope is being defined — where does your pricing come from?",
         "type": "choice",
         "options": [
           {
@@ -689,7 +689,7 @@ export const sections = [
       },
       {
         "id": "s6q2",
-        "text": "Without opening your email or your bank right now, how accurately could you describe your outstanding invoices?",
+        "text": "Without opening your email or your bank right now — how accurately could you describe your outstanding invoices?",
         "type": "choice",
         "options": [
           {
@@ -711,12 +711,12 @@ export const sections = [
       },
       {
         "id": "s6q3",
-        "text": "A project ran longer than you planned due to revisions. Once it was finished, did you actually know whether it was profitable?",
+        "text": "A project ran longer than you planned due to revisions. Once it was finished — did you actually know whether it was profitable?",
         "type": "choice",
         "options": [
           {
             "value": 0,
-            "text": "I had a clear enough sense: I know roughly what it cost me in time versus what it paid.",
+            "text": "I had a clear enough sense — I know roughly what it cost me in time versus what it paid.",
             "label": "A"
           },
           {
@@ -733,7 +733,7 @@ export const sections = [
       },
       {
         "id": "s6q4",
-        "text": "On the first of every month, what does your financial picture actually look like?",
+        "text": "On the first of every month — what does your financial picture actually look like?",
         "type": "choice",
         "options": [
           {
@@ -748,14 +748,14 @@ export const sections = [
           },
           {
             "value": 2,
-            "text": "I have a current view (revenue, outstanding invoices, projected income) maintained and ready to review.",
+            "text": "I have a current view — revenue, outstanding invoices, projected income — maintained and ready to review.",
             "label": "C"
           }
         ]
       },
       {
         "id": "s6q5",
-        "text": "Right now, which of the following exist in your financial system? (Select all that apply)",
+        "text": "Right now — which of the following exist in your financial system? *(Select all that apply)*\n## Deployment Notes\n<aside>\n⚙️\n**Q6.5 open text** must be captured before the results page renders. The answer personalizes which Pattern Paragraph version fires.\n**Pattern Paragraph versions (results page):**\n- Version A fires if Q6.5 = A (multiple failed attempts)\n- Version B fires if Q6.5 = B (started, never finished)\n- Version C fires if Q6.5 = C (first attempt)\n**OCI totals** (Section 5 + Section 6 checklists) feed a component gap count on the results page: *\"You have X of 12 operational components in one connected location.\"*\n**CRGM score** (Q2a) surfaces on results page alongside section scores — not folded into Section 5 total.\n**Zeigarnik gate:** Show section scores and total score only. Do not show tier label, interpretation, or recommendation before email capture. The score number creates the pull — the meaning requires the email.\n**Section 3 drop-off risk:** Consider a micro-progress indicator between Section 2 and Section 3: *\"You're 35% through. Section 3 takes about 90 seconds.\"*\n</aside>\n## Score Tier Reference *(Backend — Not Shown to User Before Email)*\n| Score | Tier | Pattern Paragraph Theme |\n| --- | --- | --- |\n| 0–15 | Reactive Operation | Everything runs through you personally. No architecture exists yet. |\n| 16–30 | Partial Infrastructure | Components exist but aren't connected. Manual maintenance everywhere. |\n| 31–45 | Emerging Architecture | Structure is forming. Key connections still missing or inconsistent. |\n| 46–55 | Near-Operational | Most infrastructure in place. Gap is integration and reliability. |\n| 56–60 | Connected Operation | Fully operational. Gap is optimization and scale. |\n[KineticOS Interactive Diagnostic Report Engine — System Architecture & Thinking Framework](https://app.notion.com/p/KineticOS-Interactive-Diagnostic-Report-Engine-System-Architecture-Thinking-Framework-6180fe8d0c5e83ff9b26811801af147a?pvs=21)",
         "type": "checklist",
         "options": [
           {
@@ -780,109 +780,4 @@ export const sections = [
       }
     ]
   }
-];
-
-export const scoreBands = [
-  {
-    "min": 0,
-    "max": 15,
-    "name": "Reactive Operation",
-    "description": "Your business runs entirely on memory and improvisation. No architecture exists yet. Adding a new client creates immediate overwhelm, and you are carrying the cognitive load of all unresolved details in your head. Every gap between systems is a gap you fill by hand."
-  },
-  {
-    "min": 16,
-    "max": 30,
-    "name": "Partial Infrastructure",
-    "description": "You have several tools in place, but they act as separate silos rather than a connected system. You are responding to events as they happen rather than directing them. You spend significant time switching between tabs and reconstructing context, leaving you one busy week away from details slipping through the cracks."
-  },
-  {
-    "min": 31,
-    "max": 45,
-    "name": "Emerging Architecture",
-    "description": "You are actively trying to systematize your operations, and some areas are functional. However, key connections are still missing or inconsistent, preventing you from reaching a stable, repeatable operating rhythm."
-  },
-  {
-    "min": 46,
-    "max": 55,
-    "name": "Near Operational",
-    "description": "You have built functional setups across multiple areas of your business. Despite this progress, they still don't talk to each other. Your business can grow, but your admin overhead grows with it, locking you in a capacity ceiling where you are the bottleneck."
-  },
-  {
-    "min": 56,
-    "max": 60,
-    "name": "Connected Operation",
-    "description": "Your business is supported by a fully connected, relational system. Every client record holds its files, tasks, invoices, and notes. Profit margins are visible, client onboarding is standardized, and the business could survive your absence. Your operational standards match your premium rates."
-  }
-];
-
-export const seriousOperatorBenchmarks = {
-  "foundation": {
-    "general": "A Serious Operator has pre-defined, standardized packages with explicit scope boundaries and a repeatable onboarding pipeline that takes less than 5 minutes to trigger.",
-    "designer": "A Serious Operator has predefined Figma assets, standard design packages with locked revision counts, and a repeatable onboarding flow that takes under 5 minutes to trigger.",
-    "marketer": "A Serious Operator has defined campaign packages, standardized report formats, and an onboarding intake checklist that runs exactly the same way for every new brand.",
-    "writer": "A Serious Operator has locked editing and drafting packages, standardized content brief templates, and an onboarding intake form that automatically collects style guides."
-  },
-  "productivity": {
-    "general": "A Serious Operator starts their day with a single dashboard showing only prioritized tasks that are relationally linked to active client projects. They never guess what to do next.",
-    "designer": "A Serious Operator views a unified task list where creative assets and client feedback are linked directly to each design ticket. They never search through Slack for client specs.",
-    "marketer": "A Serious Operator tracks execution tasks linked directly to campaign milestones and launch dates. They never skip a tracking parameter or setup step.",
-    "writer": "A Serious Operator operates from a unified writing queue where outlines, drafts, and approval deadlines are bound to active project cards."
-  },
-  "content": {
-    "general": "A Serious Operator writes from a centralized content calendar, planning at least two weeks out, and links every post relationally to the service package they want to fill.",
-    "designer": "A Serious Operator plans their design case studies in advance, maintains a library of design assets, and links self-promotion directly to open design slots.",
-    "marketer": "A Serious Operator plans their social insights 14 days out, drafts content systematically, and links every piece to the specific service or audit package they are running.",
-    "writer": "A Serious Operator maintains a structured content library, drafts newsletter topics ahead of schedule, and maps content to their current editorial or retainer focus."
-  },
-  "marketing": {
-    "general": "A Serious Operator maintains a CRM showing the exact value and stage of every lead, and follows a strict, pre-scheduled follow-up cadence for every proposal sent.",
-    "designer": "A Serious Operator tracks prospective clients in a pipeline, sees active design proposals, and systematically follows up at 3, 7, and 14 days without relying on memory.",
-    "marketer": "A Serious Operator tracks brand inquiries in a CRM and runs a strict, scheduled follow-up sequence on all proposals, ensuring no high-value contract drifts away.",
-    "writer": "A Serious Operator monitors their retainer pipeline and executes a documented follow-up sequence for every pitch sent, keeping their pipeline predictable."
-  },
-  "client": {
-    "general": "A Serious Operator opens a single client record containing tasks, files, invoices, and notes. Clients log into a live portal, and project archiving happens in one click.",
-    "designer": "A Serious Operator has one record per client containing design briefs, active tasks, invoices, and Figma links. Clients access a portal to check progress, and offboarding is automated.",
-    "marketer": "A Serious Operator accesses a central client record holding campaign plans, active tasks, reports, and invoices. Clients view real-time task boards in a synced portal.",
-    "writer": "A Serious Operator manages work via a client command center linking content briefs, drafts, tasks, and retainer invoices. Clients review draft links in a secure portal."
-  },
-  "finance": {
-    "general": "A Serious Operator views real-time monthly profit margins, tracks project-specific profitability, sets aside taxes automatically, and knows their exact monthly cash runway.",
-    "designer": "A Serious Operator checks real-time margins, tracks design project margins based on hours spent, invoices in 60 seconds, and maintains a distinct tax routing reserve.",
-    "marketer": "A Serious Operator views campaign ROI alongside client retainer profitability, handles invoicing instantly, and calculates business cash runway in real-time.",
-    "writer": "A Serious Operator tracks retainer margins, auto-calculates hours spent vs billable values, sends invoices immediately, and maintains a calculated runway metric."
-  }
-};
-
-export const causalConnections = {
-  "foundation-client": "Without documented service packages, every client engagement is improvised from scratch. You cannot build a repeatable project command center when the deliverables themselves are a moving target.",
-  "foundation-finance": "Without defined pricing architecture, your financial visibility remains retrospective rather than predictive. You are forced to react to past bank balances rather than forecasting project profitability.",
-  "foundation-marketing": "Without a documented ICP, your content and outreach cannot target high-value clients. You waste time creating generic content that fails to feed a qualified pipeline.",
-  "client-finance": "Without a connected project record, invoice status lives separately from deliverable status. You delay billing because compiling deliverables feels like a chore, creating unnecessary cash flow gaps.",
-  "client-productivity": "Without a project record that houses all tasks, task management is detached from client context. You spend your day jumping between email and notes to figure out what actually needs to be delivered.",
-  "content-marketing": "Without tracing content to client lead sources, you cannot know which self-promotional activities generate revenue. You treat content as a cost to be paid rather than an asset that builds your pipeline.",
-  "marketing-foundation": "Without a structured acquisition pipeline, your business depends entirely on word-of-mouth that you cannot scale. You cannot project capacity because you cannot predict when the next client will arrive."
-};
-
-export const getCausalCopy = (section1, section2) => {
-  const key1 = `${section1}-${section2}`;
-  const key2 = `${section2}-${section1}`;
-  return causalConnections[key1] || causalConnections[key2] || null;
-};
-
-export const generatePatternParagraph = (lowestSections, profession) => {
-  if (!lowestSections || lowestSections.length < 2) {
-    return "Your business operations are functional, but you are still operating in silos. Without a unified system, you spend unnecessary time switching between tools and manually connecting the dots.";
-  }
-
-  const s1 = lowestSections[0];
-  const s2 = lowestSections[1];
-  
-  const causalCopy = getCausalCopy(s1.id, s2.id);
-
-  if (causalCopy) {
-    return `Your two lowest sections - ${s1.name} and ${s2.name} - are not separate failures. They are the same failure at two different surfaces. ${causalCopy} The root is one gap, not two: your business lacks a connected, relational workspace where these functions share a single data layer. Patching each tool separately will not resolve this.`;
-  }
-
-  return `Your lowest-scoring sections - ${s1.name} and ${s2.name} - are causing significant drag on your operations. Because these areas are disconnected, information gets lost in transition, requiring you to manually rebuild context and bridge the gaps between tools. The root cause is a lack of connected, relational architecture in your workspace.`;
-};
+]

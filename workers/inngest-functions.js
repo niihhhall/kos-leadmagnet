@@ -99,6 +99,7 @@ export function createInngestFunctions(inngest, env) {
       const {
         firstName, lastName, email, profession,
         clientCount, score, sectionScores, reportData,
+        answers,
       } = event.data;
 
       // ── Step 1: Save Lead to Supabase ─────────────────────────────────────
@@ -148,6 +149,7 @@ export function createInngestFunctions(inngest, env) {
         const html = buildReportHtml({
           firstName, lastName, email, profession,
           score, sectionScores, reportJson: reportData,
+          answers: answers || {},
         });
 
         const res = await fetch('https://markeye--kos-pdf-endpoint.modal.run', {

@@ -59,7 +59,7 @@ function buildLLMPrompt({ firstName, lastName, profession, clientCount, score, s
     score <= 20 ? 'Fragmented Operations (0–20)' :
     score <= 35 ? 'Reactive Systems (21–35)' :
     score <= 45 ? 'Emerging Architecture (36–45)' :
-    score <= 55 ? 'Near-Operational (46–55)' :
+    score <= 55 ? 'Near Operational (46–55)' :
     'Connected Operation (56–60)';
 
   return `You are a senior business operations analyst for KineticOS, a systems consulting firm for freelancers and independent service professionals.
@@ -444,6 +444,7 @@ const mainHandler = {
         score,
         sectionScores,
         reportData,
+        answers: answers || {},
       },
     });
     if (ctx && typeof ctx.waitUntil === 'function') {
