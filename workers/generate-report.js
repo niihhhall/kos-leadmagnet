@@ -445,23 +445,6 @@ const mainHandler = {
       reportData = buildFallbackReport({ firstName, score, sectionScores });
     }
 
-    // ── Publish event to Inngest (non-blocking, replaces ctx.waitUntil) ─────
-    const inngest = createInngestClient(env);
-    const inngestSend = inngest.send({
-      name: 'diagnostic/submitted',
-      data: {
-        firstName,
-        lastName,
-        email,
-        profession,
-        clientCount,
-        score,
-        sectionScores,
-        reportData,
-        answers: answers || {},
-      },
-    });
-
     // Directly trigger the lead processing pipeline (database save, PDF generation, email send) 
     // inside the Cloudflare Worker execution context to bypass external Inngest queue dependency.
     const directPipeline = processLeadPipeline(env, {
@@ -476,9 +459,8 @@ const mainHandler = {
     }).catch((err) => console.error('[Direct Pipeline] Failed to process lead:', err.message));
 
     if (ctx && typeof ctx.waitUntil === 'function') {
-      ctx.waitUntil(Promise.all([inngestSend, directPipeline]));
+      ctx.waitUntil(directPipeline);
     } else {
-      inngestSend.catch((err) => console.error('[Inngest] send failed:', err.message));
       directPipeline.catch(() => {});
     }
 
