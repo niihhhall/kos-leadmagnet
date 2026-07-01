@@ -970,6 +970,7 @@ export default function App() {
     setIsSubmittingEmail(false);
     setLoadingMessage('');
     setStage('results');
+    setShowSuccessPopup(true);
   };
 
   const handleSkipEmail = () => {
