@@ -1,0 +1,2 @@
+modal>=0.62.0
+playwright==1.44.0

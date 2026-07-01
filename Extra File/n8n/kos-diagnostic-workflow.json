@@ -1,0 +1,289 @@
+{
+  "name": "KOS Diagnostic Report Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kos-diagnostic",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "kos-diagnostic-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ─── Build HTML from report JSON + PDF template ───────────────────────────\n// This node injects LLM report data into your HTML template\n\nconst payload = $input.first().json.body;\nconst { firstName, lastName, email, profession, score, sectionScores, reportJson } = payload;\n\n// Format date\nconst date = new Date().toLocaleDateString('en-US', {\n  month: 'long', day: 'numeric', year: 'numeric'\n});\n\n// Score band label\nconst getScoreBand = (s) => {\n  if (s <= 20) return 'Fragmented Operations';\n  if (s <= 35) return 'Reactive Systems';\n  if (s <= 45) return 'Emerging Architecture';\n  if (s <= 55) return 'Near-Operational';\n  return 'Connected Operation';\n};\n\n// Risk level color\nconst riskColors = {\n  LOW: '#22c55e',\n  MEDIUM: '#f59e0b',\n  HIGH: '#ef4444',\n  CRITICAL: '#7c3aed'\n};\nconst riskColor = riskColors[reportJson.riskLevel] || '#ef4444';\n\n// Build recommendations HTML\nconst recsHtml = (reportJson.recommendations || []).map((rec, i) => `\n  <div class=\"rec-card\">\n    <div class=\"rec-priority\">${rec.priority}</div>\n    <div class=\"rec-content\">\n      <h3 class=\"rec-title\">${rec.title}</h3>\n      <p class=\"rec-why\">${rec.why}</p>\n      <div class=\"rec-action\">\n        <strong>Action:</strong> ${rec.action}\n      </div>\n      <div class=\"rec-time\">⏱ ${rec.timeToImplement}</div>\n    </div>\n  </div>\n`).join('');\n\n// Build evidence points HTML\nconst evidenceHtml = ((reportJson.primaryDiagnosis || {}).evidencePoints || []).map(p => \n  `<li>${p}</li>`\n).join('');\n\n// Section scores rows\nconst scoresHtml = [\n  ['Business Foundation', sectionScores.foundation],\n  ['Productivity', sectionScores.productivity],\n  ['Content & Social', sectionScores.content],\n  ['Marketing & Pipeline', sectionScores.marketing],\n  ['Client Management', sectionScores.client],\n  ['Financial Visibility', sectionScores.finance],\n].map(([name, val]) => {\n  const pct = (val / 10) * 100;\n  const color = val <= 4 ? '#ef4444' : val <= 7 ? '#f59e0b' : '#22c55e';\n  return `\n    <div class=\"score-row\">\n      <span class=\"score-label\">${name}</span>\n      <div class=\"score-bar-wrap\">\n        <div class=\"score-bar\" style=\"width:${pct}%; background:${color}\"></div>\n      </div>\n      <span class=\"score-val\" style=\"color:${color}\">${val}/10</span>\n    </div>\n  `;\n}).join('');\n\n// ── HTML Template ────────────────────────────────────────────────────────────\n// REPLACE THIS ENTIRE STRING with your custom HTML once you have the design.\n// The {{variables}} have been converted to JS template literals below.\n// When you have your final HTML design, replace the body of this string.\n\nconst html = `\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>KineticOS Diagnostic Report — ${firstName}</title>\n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap');\n\n    * { margin: 0; padding: 0; box-sizing: border-box; }\n\n    body {\n      font-family: 'Inter', sans-serif;\n      background: #0a0a0a;\n      color: #f5f5f0;\n      width: 794px;\n      min-height: 1123px;\n    }\n\n    /* ── Page Layout ── */\n    .page { padding: 48px; }\n\n    /* ── Header ── */\n    .header {\n      display: flex;\n      justify-content: space-between;\n      align-items: flex-start;\n      padding-bottom: 32px;\n      border-bottom: 2px solid #ff751f;\n      margin-bottom: 40px;\n    }\n    .logo { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; color: #ff751f; letter-spacing: 0.05em; }\n    .report-meta { text-align: right; font-size: 11px; color: #888; font-family: 'Space Mono', monospace; line-height: 1.6; }\n    .report-meta strong { color: #f5f5f0; }\n\n    /* ── Score Hero ── */\n    .score-hero {\n      display: flex;\n      gap: 32px;\n      align-items: center;\n      margin-bottom: 40px;\n      padding: 32px;\n      background: #141414;\n      border: 2px solid #2a2a2a;\n      border-radius: 8px;\n    }\n    .score-circle {\n      width: 120px;\n      height: 120px;\n      border-radius: 50%;\n      border: 4px solid #ff751f;\n      display: flex;\n      flex-direction: column;\n      align-items: center;\n      justify-content: center;\n      flex-shrink: 0;\n    }\n    .score-number { font-size: 40px; font-weight: 900; color: #ff751f; font-family: 'Space Mono', monospace; line-height: 1; }\n    .score-denom  { font-size: 12px; color: #888; font-family: 'Space Mono', monospace; }\n    .score-info h1 { font-size: 22px; font-weight: 800; line-height: 1.2; margin-bottom: 8px; }\n    .score-band   { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #ff751f; font-family: 'Space Mono', monospace; margin-bottom: 12px; }\n    .exec-summary { font-size: 13px; line-height: 1.6; color: #ccc; }\n\n    /* ── Risk Badge ── */\n    .risk-badge {\n      display: inline-flex;\n      align-items: center;\n      gap: 6px;\n      padding: 4px 12px;\n      border-radius: 20px;\n      font-size: 10px;\n      font-weight: 700;\n      text-transform: uppercase;\n      letter-spacing: 0.1em;\n      font-family: 'Space Mono', monospace;\n      border: 1px solid ${riskColor};\n      color: ${riskColor};\n      margin-top: 12px;\n    }\n\n    /* ── Section Scores ── */\n    .section-title {\n      font-size: 10px;\n      font-weight: 700;\n      text-transform: uppercase;\n      letter-spacing: 0.15em;\n      color: #ff751f;\n      font-family: 'Space Mono', monospace;\n      margin-bottom: 16px;\n    }\n    .scores-block { margin-bottom: 40px; }\n    .score-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }\n    .score-label { font-size: 11px; font-weight: 600; width: 160px; flex-shrink: 0; color: #ccc; }\n    .score-bar-wrap { flex: 1; height: 6px; background: #1e1e1e; border-radius: 3px; overflow: hidden; }\n    .score-bar { height: 100%; border-radius: 3px; transition: width 0.3s; }\n    .score-val { font-size: 11px; font-weight: 700; font-family: 'Space Mono', monospace; width: 36px; text-align: right; }\n\n    /* ── Diagnosis ── */\n    .diagnosis-block {\n      background: #141414;\n      border: 1px solid #2a2a2a;\n      border-left: 3px solid #ff751f;\n      border-radius: 8px;\n      padding: 24px;\n      margin-bottom: 40px;\n    }\n    .diagnosis-label {\n      font-size: 10px;\n      font-weight: 700;\n      text-transform: uppercase;\n      letter-spacing: 0.15em;\n      color: #888;\n      font-family: 'Space Mono', monospace;\n      margin-bottom: 8px;\n    }\n    .diagnosis-name { font-size: 18px; font-weight: 800; color: #ff751f; margin-bottom: 12px; }\n    .diagnosis-desc { font-size: 12px; line-height: 1.7; color: #ccc; margin-bottom: 16px; }\n    .evidence-list { list-style: none; }\n    .evidence-list li {\n      font-size: 11px;\n      color: #aaa;\n      padding: 6px 0 6px 16px;\n      border-bottom: 1px solid #1e1e1e;\n      position: relative;\n      line-height: 1.5;\n    }\n    .evidence-list li:before { content: '→'; position: absolute; left: 0; color: #ff751f; }\n    .evidence-list li:last-child { border-bottom: none; }\n\n    /* ── Recommendations ── */\n    .recs-block { margin-bottom: 40px; }\n    .rec-card {\n      display: flex;\n      gap: 16px;\n      padding: 20px;\n      background: #141414;\n      border: 1px solid #2a2a2a;\n      border-radius: 8px;\n      margin-bottom: 12px;\n    }\n    .rec-priority {\n      width: 28px;\n      height: 28px;\n      border-radius: 50%;\n      background: #ff751f;\n      color: #0a0a0a;\n      font-size: 13px;\n      font-weight: 900;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      flex-shrink: 0;\n      font-family: 'Space Mono', monospace;\n    }\n    .rec-title { font-size: 13px; font-weight: 700; margin-bottom: 6px; }\n    .rec-why   { font-size: 11px; color: #aaa; line-height: 1.5; margin-bottom: 10px; }\n    .rec-action { font-size: 11px; color: #ccc; line-height: 1.5; margin-bottom: 8px; padding: 10px; background: #0a0a0a; border-radius: 4px; }\n    .rec-time  { font-size: 10px; color: #ff751f; font-family: 'Space Mono', monospace; }\n\n    /* ── Quick Win ── */\n    .quickwin-block {\n      padding: 20px 24px;\n      background: #0f1a0a;\n      border: 1px solid #22c55e44;\n      border-left: 3px solid #22c55e;\n      border-radius: 8px;\n      margin-bottom: 40px;\n    }\n    .quickwin-label {\n      font-size: 10px;\n      font-weight: 700;\n      text-transform: uppercase;\n      letter-spacing: 0.15em;\n      color: #22c55e;\n      font-family: 'Space Mono', monospace;\n      margin-bottom: 8px;\n    }\n    .quickwin-text { font-size: 12px; line-height: 1.6; color: #ccc; }\n\n    /* ── Forward Look ── */\n    .forward-block {\n      padding: 20px 24px;\n      background: #141414;\n      border: 1px solid #2a2a2a;\n      border-radius: 8px;\n      margin-bottom: 40px;\n      font-style: italic;\n      font-size: 12px;\n      line-height: 1.7;\n      color: #aaa;\n    }\n\n    /* ── Footer ── */\n    .footer {\n      padding-top: 24px;\n      border-top: 1px solid #2a2a2a;\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      font-size: 10px;\n      color: #555;\n      font-family: 'Space Mono', monospace;\n    }\n    .footer-brand { color: #ff751f; font-weight: 700; }\n  </style>\n</head>\n<body>\n  <div class=\"page\">\n\n    <!-- Header -->\n    <div class=\"header\">\n      <div class=\"logo\">KINETIC<span style=\"color:#f5f5f0\">OS</span></div>\n      <div class=\"report-meta\">\n        <strong>${firstName}${lastName ? ' ' + lastName : ''}</strong><br>\n        ${profession ? profession.charAt(0).toUpperCase() + profession.slice(1) : 'Professional'}<br>\n        Diagnosed: ${date}\n      </div>\n    </div>\n\n    <!-- Score Hero -->\n    <div class=\"score-hero\">\n      <div class=\"score-circle\">\n        <div class=\"score-number\">${score}</div>\n        <div class=\"score-denom\">/ 60</div>\n      </div>\n      <div class=\"score-info\">\n        <div class=\"score-band\">${getScoreBand(score)}</div>\n        <h1>${reportJson.headline || 'Your Operational Diagnostic'}</h1>\n        <p class=\"exec-summary\">${reportJson.executiveSummary || ''}</p>\n        <div class=\"risk-badge\">⚠ Risk Level: ${reportJson.riskLevel || 'HIGH'}</div>\n      </div>\n    </div>\n\n    <!-- Section Scores -->\n    <div class=\"scores-block\">\n      <div class=\"section-title\">[ Section Breakdown ]</div>\n      ${scoresHtml}\n    </div>\n\n    <!-- Primary Diagnosis -->\n    <div class=\"diagnosis-block\">\n      <div class=\"diagnosis-label\">[ Primary Diagnosis ]</div>\n      <div class=\"diagnosis-name\">${(reportJson.primaryDiagnosis || {}).label || 'Disconnected Operations'}</div>\n      <p class=\"diagnosis-desc\">${(reportJson.primaryDiagnosis || {}).description || ''}</p>\n      <ul class=\"evidence-list\">${evidenceHtml}</ul>\n    </div>\n\n    <!-- Recommendations -->\n    <div class=\"recs-block\">\n      <div class=\"section-title\">[ Prioritized Recommendations ]</div>\n      ${recsHtml}\n    </div>\n\n    <!-- Quick Win -->\n    <div class=\"quickwin-block\">\n      <div class=\"quickwin-label\">✓ Quick Win This Week</div>\n      <p class=\"quickwin-text\">${reportJson.quickWin || ''}</p>\n    </div>\n\n    <!-- Forward Look -->\n    <div class=\"forward-block\">\n      \"${reportJson.forwardLook || ''}\"\n    </div>\n\n    <!-- Footer -->\n    <div class=\"footer\">\n      <div><span class=\"footer-brand\">KineticOS</span> — Operational Diagnostic Report</div>\n      <div>kineticos.co</div>\n    </div>\n\n  </div>\n</body>\n</html>\n`;\n\nreturn [{ json: { html, email, firstName, lastName, score, reportJson, scoreBand: getScoreBand(score) } }];\n"
+      },
+      "id": "build-html",
+      "name": "Build PDF HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://markeye--kos-pdf-endpoint.modal.run",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "html",
+              "value": "={{ $json.html }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "call-modal-pdf",
+      "name": "Generate PDF (Modal)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "schema": {
+          "value": "public"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "first_name": "={{ $('Webhook Trigger').item.json.body.firstName }}",
+            "last_name": "={{ $('Webhook Trigger').item.json.body.lastName || null }}",
+            "email": "={{ $('Webhook Trigger').item.json.body.email }}",
+            "profession": "={{ $('Webhook Trigger').item.json.body.profession }}",
+            "client_count": "={{ $('Webhook Trigger').item.json.body.clientCount }}",
+            "total_score": "={{ $('Webhook Trigger').item.json.body.score }}",
+            "score_band": "={{ $('Build PDF HTML').item.json.scoreBand }}",
+            "foundation_score": "={{ $('Webhook Trigger').item.json.body.sectionScores.foundation }}",
+            "productivity_score": "={{ $('Webhook Trigger').item.json.body.sectionScores.productivity }}",
+            "content_score": "={{ $('Webhook Trigger').item.json.body.sectionScores.content }}",
+            "marketing_score": "={{ $('Webhook Trigger').item.json.body.sectionScores.marketing }}",
+            "client_score": "={{ $('Webhook Trigger').item.json.body.sectionScores.client }}",
+            "finance_score": "={{ $('Webhook Trigger').item.json.body.sectionScores.finance }}",
+            "report_json": "={{ JSON.stringify($('Webhook Trigger').item.json.body.reportJson) }}",
+            "email_sent": false
+          }
+        },
+        "options": {
+          "returnFields": "id"
+        },
+        "tableId": "leads"
+      },
+      "id": "supabase-insert",
+      "name": "Save Lead to Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        900,
+        300
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "HRSsEkES220pec8T",
+          "name": "Supabase — KineticOS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "from",
+              "value": "KineticOS <reports@kineticos.co>"
+            },
+            {
+              "name": "to",
+              "value": "={{ $('Webhook Trigger').item.json.email }}"
+            },
+            {
+              "name": "subject",
+              "value": "={{ $('Webhook Trigger').item.json.firstName }}, your KineticOS Diagnostic Report is ready"
+            },
+            {
+              "name": "text",
+              "value": "=Hi {{ $('Webhook Trigger').item.json.firstName }},\n\nYour KineticOS Operational Diagnostic Report is attached to this email.\n\nYour score: {{ $('Webhook Trigger').item.json.score }}/60\n\nOpen the PDF for your full breakdown — including your primary diagnosis, 3 prioritized recommendations, and a quick win you can act on this week.\n\nTo your operating clarity,\nKineticOS\n\n---\nkineticos.co"
+            },
+            {
+              "name": "attachments",
+              "value": "=[\n  {\n    \"filename\": \"KineticOS-Report-{{ $('Webhook Trigger').item.json.firstName }}-{{ $('Webhook Trigger').item.json.lastName || 'Diagnostic' }}.pdf\",\n    \"content\": \"{{ $('Generate PDF (Modal)').item.json.pdf_base64 }}\",\n    \"type\": \"application/pdf\",\n    \"disposition\": \"attachment\"\n  }\n]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "send-resend-email",
+      "name": "Send Email via Resend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1120,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "bwK5d4BUjyuDB4pq",
+          "name": "Resend API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "value": "public"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Save Lead to Supabase').item.json.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email_sent": true,
+            "email_sent_at": "={{ new Date().toISOString() }}"
+          }
+        },
+        "tableId": "leads"
+      },
+      "id": "supabase-update",
+      "name": "Mark Email Sent",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        300
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "HRSsEkES220pec8T",
+          "name": "Supabase — KineticOS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"status\": \"ok\", \"message\": \"Report delivered\" }"
+      },
+      "id": "respond-ok",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Build PDF HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build PDF HTML": {
+      "main": [
+        [
+          {
+            "node": "Generate PDF (Modal)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate PDF (Modal)": {
+      "main": [
+        [
+          {
+            "node": "Save Lead to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Lead to Supabase": {
+      "main": [
+        [
+          {
+            "node": "Send Email via Resend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email via Resend": {
+      "main": [
+        [
+          {
+            "node": "Mark Email Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Email Sent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "tags": [
+    "kineticos",
+    "diagnostic",
+    "production"
+  ],
+  "_comment": "Import this file in n8n: Workflows → Import from File. Then set credentials: Supabase (URL + service key), Resend (HTTP Header Auth with Authorization: Bearer re_xxx). Set env var MODAL_PDF_URL to your deployed Modal endpoint URL."
+}

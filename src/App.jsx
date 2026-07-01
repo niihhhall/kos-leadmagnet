@@ -1115,7 +1115,7 @@ export default function App() {
                 <div className="hero-stat-divider" />
                 <div className="hero-stat-item">
                   <span className="hero-stat-number">
-                    <AnimatedNumber value={7} /><span style={{fontSize:'0.9rem', fontWeight:700}}>min</span>
+                    <AnimatedNumber value={7} /><span style={{fontSize:'0.7rem', fontWeight:700}}>min</span>
                   </span>
                   <span className="hero-stat-label hero-stat-label-animate">Avg. Time</span>
                 </div>
@@ -1476,162 +1476,175 @@ export default function App() {
         {/* STAGE 4: SCORE REVEAL & EMAIL GATE */}
         {stage === 'reveal' && (
           <div className="score-reveal-wrapper animate-fade-in">
-            <div className="score-display-ring">
-              <span className="score-label">
-                Your Diagnostic Result
-              </span>
-              <div className="score-number">{animatedScore}</div>
-              <div className="score-max">OUT OF 60</div>
-            </div>
-
-            {!showEmailGate && (
-              (() => {
-                const finalScore = Math.round(calculateTotalScore());
-                return (
-                  <div className="reveal-loader-container">
-                    <div className="reveal-loader-bar-track">
-                      <div 
-                        className="reveal-loader-bar-fill" 
-                        style={{ width: `${finalScore > 0 ? (animatedScore / finalScore) * 100 : 100}%` }}
-                      ></div>
-                    </div>
-                    <div className="reveal-loader-status-text text-mono text-xs uppercase tracking-wider mt-12">
-                      {animatedScore < finalScore * 0.20 && "Initializing system audit..."}
-                      {animatedScore >= finalScore * 0.20 && animatedScore < finalScore * 0.40 && "Analyzing your diagnostic responses..."}
-                      {animatedScore >= finalScore * 0.40 && animatedScore < finalScore * 0.60 && "Benchmarking operational parameters..."}
-                      {animatedScore >= finalScore * 0.60 && animatedScore < finalScore * 0.80 && "Identifying systemic leakage points..."}
-                      {animatedScore >= finalScore * 0.80 && animatedScore < finalScore && "Compiling custom recommendations..."}
-                      {animatedScore === finalScore && "Calculations complete! Preparing your report..."}
-                    </div>
-                  </div>
-                );
-              })()
-            )}
-
-            {showEmailGate && (
-              <div className="animate-fade-in w-full">
-                <div className="section-scores-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', width: '100%', maxWidth: '580px', margin: '32px auto 40px auto' }}>
-                  {sections.map(s => {
-                    const score = calculateSectionScore(s.id);
-                    return (
-                      <div key={s.id} className="section-score-item" style={{ border: '2px solid var(--color-text-primary)', padding: '16px 20px', borderRadius: 'var(--radius-technical)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--color-bg-results)', boxShadow: '2px 2px 0px 0px var(--color-text-primary)' }}>
-                        <span style={{ fontSize: '0.8rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'left' }}>{s.name}</span>
-                        <span className="text-accent text-mono" style={{ fontSize: '1.05rem', fontWeight: '900', marginLeft: '12px', whiteSpace: 'nowrap' }}>{score} / 10</span>
+            {!showEmailGate ? (
+              <>
+                <div className="score-display-ring">
+                  <span className="score-label">
+                    Your Diagnostic Result
+                  </span>
+                  <div className="score-number">{animatedScore}</div>
+                  <div className="score-max">OUT OF 60</div>
+                </div>
+                {(() => {
+                  const finalScore = Math.round(calculateTotalScore());
+                  return (
+                    <div className="reveal-loader-container">
+                      <div className="reveal-loader-bar-track">
+                        <div 
+                          className="reveal-loader-bar-fill" 
+                          style={{ width: `${finalScore > 0 ? (animatedScore / finalScore) * 100 : 100}%` }}
+                        ></div>
                       </div>
-                    );
-                  })}
+                      <div className="reveal-loader-status-text text-mono text-xs uppercase tracking-wider mt-12">
+                        {animatedScore < finalScore * 0.20 && "Initializing system audit..."}
+                        {animatedScore >= finalScore * 0.20 && animatedScore < finalScore * 0.40 && "Analyzing your diagnostic responses..."}
+                        {animatedScore >= finalScore * 0.40 && animatedScore < finalScore * 0.60 && "Benchmarking operational parameters..."}
+                        {animatedScore >= finalScore * 0.60 && animatedScore < finalScore * 0.80 && "Identifying systemic leakage points..."}
+                        {animatedScore >= finalScore * 0.80 && animatedScore < finalScore && "Compiling custom recommendations..."}
+                        {animatedScore === finalScore && "Calculations complete! Preparing your report..."}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </>
+            ) : (
+              <div className="reveal-split-layout animate-fade-in">
+                {/* Left Side: Score display + Section breakdown */}
+                <div className="reveal-left-pane">
+                  <div className="score-display-ring">
+                    <span className="score-label">
+                      Your Diagnostic Result
+                    </span>
+                    <div className="score-number">{animatedScore}</div>
+                    <div className="score-max">OUT OF 60</div>
+                  </div>
+
+                  <div className="section-scores-grid">
+                    {sections.map(s => {
+                      const score = calculateSectionScore(s.id);
+                      return (
+                        <div key={s.id} className="section-score-item">
+                          <span className="section-score-name">{s.name}</span>
+                          <span className="section-score-val text-accent text-mono">{score} / 10</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
 
-                <div className={`email-form-card ${emailFormFocus ? 'focus-active' : ''}`}>
-                  <form onSubmit={handleEmailSubmit}>
-                    <label className="email-label">
-                      Get Your Full Report
-                    </label>
+                {/* Right Side: Email form card */}
+                <div className="reveal-right-pane">
+                  <div className={`email-form-card ${emailFormFocus ? 'focus-active' : ''}`}>
+                    <form onSubmit={handleEmailSubmit}>
+                      <label className="email-label">
+                        Get Your Full Report
+                      </label>
 
-                    {/* Name row */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                      <div>
-                        <label className="text-xs text-secondary" style={{ display: 'block', marginBottom: '6px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>First Name *</label>
+                      {/* Name row */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                        <div>
+                          <label className="text-xs text-secondary" style={{ display: 'block', marginBottom: '6px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>First Name *</label>
+                          <input
+                            id="first-name-input"
+                            type="text"
+                            className="email-input"
+                            placeholder="Sarah"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            onFocus={() => setEmailFormFocus(true)}
+                            onBlur={() => setEmailFormFocus(false)}
+                            required
+                            disabled={isSubmittingEmail}
+                            style={{ marginBottom: 0 }}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs text-secondary" style={{ display: 'block', marginBottom: '6px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Last Name</label>
+                          <input
+                            id="last-name-input"
+                            type="text"
+                            className="email-input"
+                            placeholder="Chen"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                            onFocus={() => setEmailFormFocus(true)}
+                            onBlur={() => setEmailFormFocus(false)}
+                            disabled={isSubmittingEmail}
+                            style={{ marginBottom: 0 }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Email row + Submit */}
+                      <div className="email-input-wrapper">
                         <input
-                          id="first-name-input"
-                          type="text"
+                          id="email-input"
+                          type="email"
                           className="email-input"
-                          placeholder="Sarah"
-                          value={firstName}
-                          onChange={(e) => setFirstName(e.target.value)}
+                          placeholder="your@email.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
                           onFocus={() => setEmailFormFocus(true)}
                           onBlur={() => setEmailFormFocus(false)}
                           required
                           disabled={isSubmittingEmail}
-                          style={{ marginBottom: 0 }}
                         />
+                        <button 
+                          type="submit" 
+                          className="btn-primary flex-center-gap-2"
+                          disabled={isSubmittingEmail || !email.includes('@') || !firstName.trim()}
+                        >
+                          {isSubmittingEmail ? (
+                            <>
+                              <RefreshCw className="animate-spin" size={18} />
+                              <span>Generating...</span>
+                            </>
+                          ) : (
+                            <>
+                              <span>Send My Report</span>
+                              <ArrowRight size={16} />
+                            </>
+                          )}
+                        </button>
                       </div>
-                      <div>
-                        <label className="text-xs text-secondary" style={{ display: 'block', marginBottom: '6px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Last Name</label>
-                        <input
-                          id="last-name-input"
-                          type="text"
-                          className="email-input"
-                          placeholder="Chen"
-                          value={lastName}
-                          onChange={(e) => setLastName(e.target.value)}
-                          onFocus={() => setEmailFormFocus(true)}
-                          onBlur={() => setEmailFormFocus(false)}
-                          disabled={isSubmittingEmail}
-                          style={{ marginBottom: 0 }}
-                        />
-                      </div>
-                    </div>
 
-                    {/* Email row + Submit */}
-                    <div className="email-input-wrapper">
-                      <input
-                        id="email-input"
-                        type="email"
-                        className="email-input"
-                        placeholder="your@email.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        onFocus={() => setEmailFormFocus(true)}
-                        onBlur={() => setEmailFormFocus(false)}
-                        required
-                        disabled={isSubmittingEmail}
-                      />
-                      <button 
-                        type="submit" 
-                        className="btn-primary flex-center-gap-2"
-                        disabled={isSubmittingEmail || !email.includes('@') || !firstName.trim()}
-                      >
-                        {isSubmittingEmail ? (
-                          <>
-                            <RefreshCw className="animate-spin" size={18} />
-                            <span>Generating...</span>
-                          </>
-                        ) : (
-                          <>
-                            <span>Send My Report</span>
-                            <ArrowRight size={16} />
-                          </>
-                        )}
-                      </button>
-                    </div>
+                      {/* Error message */}
+                      {emailError && (
+                        <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '8px', fontWeight: '600' }}>
+                          {emailError}
+                        </p>
+                      )}
 
-                    {/* Error message */}
-                    {emailError && (
-                      <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '8px', fontWeight: '600' }}>
-                        {emailError}
+                      <p style={{ fontSize: '11px', color: 'var(--color-text-secondary)', marginTop: '10px', textAlign: 'center' }}>
+                        <Lock size={10} style={{ display: 'inline', marginRight: '4px' }} />
+                        Your PDF report will be sent within 60 seconds.
                       </p>
-                    )}
-
-                    <p style={{ fontSize: '11px', color: 'var(--color-text-secondary)', marginTop: '10px', textAlign: 'center' }}>
-                      <Lock size={10} style={{ display: 'inline', marginRight: '4px' }} />
-                      Your PDF report will be sent within 60 seconds.
-                    </p>
-                  </form>
-                  
-                  <button 
-                    type="button"
-                    className="btn-secondary"
-                    onClick={handleSkipEmail}
-                    disabled={isSubmittingEmail}
-                    style={{ width: '100%', marginTop: '20px' }}
-                  >
-                    Skip and show my summary on screen
-                  </button>
-
-                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border-light)' }}>
-                    <button
+                    </form>
+                    
+                    <button 
                       type="button"
                       className="btn-secondary"
-                      style={{ padding: '12px 24px', fontSize: '0.85rem', width: 'auto', gap: '8px' }}
-                      onClick={() => {
-                        setStage('diagnostic');
-                        setCurrentSectionIndex(5);
-                      }}
+                      onClick={handleSkipEmail}
+                      disabled={isSubmittingEmail}
+                      style={{ width: '100%', marginTop: '20px' }}
                     >
-                      <ArrowLeft size={16} />
-                      <span>Back to Questions</span>
+                      Skip and show my summary on screen
                     </button>
+
+                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border-light)' }}>
+                      <button
+                        type="button"
+                        className="btn-secondary"
+                        style={{ padding: '12px 24px', fontSize: '0.85rem', width: 'auto', gap: '8px' }}
+                        onClick={() => {
+                          setStage('diagnostic');
+                          setCurrentSectionIndex(5);
+                        }}
+                      >
+                        <ArrowLeft size={16} />
+                        <span>Back to Questions</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1691,12 +1704,52 @@ export default function App() {
 
             {/* Block 1: Score Context & Executive Summary */}
             <div className="mb-40">
-              <h2 className="text-sm uppercase tracking-wider text-muted mb-12">Operational Diagnosis</h2>
-              <p className="text-secondary mb-16">
+              <div className="section-header-brutalist">
+                <span className="section-label-badge">01 // Diagnosis</span>
+                <h2 className="section-title-large">Operational Diagnosis</h2>
+              </div>
+              <p className="text-secondary mb-24" style={{ fontSize: '1.05rem', lineHeight: '1.6' }}>
                 {getScoreBand(calculateTotalScore()).description}
               </p>
-              <div className="executive-diagnosis-paragraph p-20 border-accent border-light bg-accent-subtle rounded-technical">
-                <strong>Executive Assessment:</strong> Based on your answers as a Freelance {profession ? profession.charAt(0).toUpperCase() + profession.slice(1) : ''} with {clientCount} active clients: your lowest performance centers in <strong>{lowestSections.map(s => s.name).join(' & ')}</strong>. This indicates your business is facing a capacity or trackability bottleneck. Your calculated workspace consistency index is <strong>{(composites.crgmScore >= 4 && answers.s5q1 !== 'C' ? 'Low' : 'Aligned')}</strong>, and you are running a single-point-of-failure risk level of <strong>{composites.riskScore >= 7 ? 'High' : (composites.riskScore >= 4 ? 'Moderate' : 'Low')}</strong>.
+              
+              <div className="exec-assessment-container">
+                <div className="exec-header-bar">
+                  <div className="exec-header-title">
+                    <Sparkles className="exec-header-icon" size={14} />
+                    <span>Executive Assessment</span>
+                  </div>
+                  <span className="text-mono text-xxs text-muted" style={{ fontSize: '10px' }}>ANALYSIS ID: KOS-DIAG-01</span>
+                </div>
+
+                <div className="exec-meta-grid">
+                  <div className="exec-meta-item">
+                    <span className="exec-meta-label">Segment / Role</span>
+                    <span className="exec-meta-val">Freelance {profession ? profession.charAt(0).toUpperCase() + profession.slice(1) : 'Professional'}</span>
+                  </div>
+                  <div className="exec-meta-item">
+                    <span className="exec-meta-label">Scale (Clients)</span>
+                    <span className="exec-meta-val">{clientCount || 'N/A'} Active</span>
+                  </div>
+                  <div className="exec-meta-item">
+                    <span className="exec-meta-label">Workspace Index</span>
+                    <span className="exec-meta-val text-mono" style={{ color: composites.crgmScore >= 4 && answers.s5q1 !== 'C' ? 'var(--color-accent)' : '#10b981' }}>
+                      {composites.crgmScore >= 4 && answers.s5q1 !== 'C' ? 'LOW' : 'ALIGNED'}
+                    </span>
+                  </div>
+                  <div className="exec-meta-item">
+                    <span className="exec-meta-label">SPOF Risk Level</span>
+                    <span className="exec-meta-val text-mono" style={{ color: composites.riskScore >= 7 ? '#ef4444' : composites.riskScore >= 4 ? 'var(--color-accent)' : '#10b981' }}>
+                      {composites.riskScore >= 7 ? 'HIGH' : (composites.riskScore >= 4 ? 'MODERATE' : 'LOW')}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="exec-narrative-box">
+                  <p>
+                    <span className="exec-prompt-char">&gt;</span>
+                    Based on your answers, your lowest performance centers in <strong>{lowestSections.map(s => s.name).join(' & ')}</strong>. This indicates your business is facing a capacity or trackability bottleneck where your admin overhead locks you in a capacity ceiling.
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -1735,275 +1788,32 @@ export default function App() {
                 );
               })}
 
-              <div className="oci-tracker-card mt-32 p-20 border-dark rounded-technical bg-results flex-align-center-gap-4">
-                <CheckSquare className="text-accent" size={24} />
-                <div>
-                  <h4 className="m-0">Operational Component Inventory (OCI)</h4>
-                  <p className="m-0 text-sm text-secondary">
+              <div className="oci-redesigned-card mt-32">
+                <div className="oci-score-block">
+                  <span className="oci-score-num">{composites.ociTotal}</span>
+                  <span className="oci-score-denom">/12</span>
+                </div>
+                <div className="oci-content-block">
+                  <h4 className="oci-card-title">Operational Component Inventory (OCI)</h4>
+                  <p className="oci-card-desc mb-12">
                     You have verified that <strong>{composites.ociTotal} of 12</strong> key relational documents/trackers currently exist in one connected location in your business.
                   </p>
+                  <div className="oci-visual-grid">
+                    {Array.from({ length: 12 }).map((_, i) => (
+                      <div 
+                        key={i} 
+                        className={`oci-block-dot ${i < composites.ociTotal ? 'active' : 'inactive'}`}
+                        title={i < composites.ociTotal ? 'Active inventory item' : 'Missing inventory item'}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Block 3: Dynamic Pattern Analysis */}
+            {/* Block 3: Cost Calculator & Soft Offer */}
             <div className="mb-40">
-              <h2 className="text-sm uppercase tracking-wider text-muted mb-24">Pattern Analysis</h2>
-              
-              {emailSubmitted ? (
-                <div className="pattern-callout animate-fade-in">
-                  <div className="pattern-title">
-                    <Sparkles size={16} />
-                    <span>Operational Root Cause</span>
-                  </div>
-                  <p className="pattern-text mb-16">
-                    {generatePatternParagraph(lowestSections, profession)}
-                  </p>
-
-                  <div className="prior-failure-card border-light p-16 mt-16 rounded-technical bg-accent-subtle">
-                    <h4 className="m-0 text-primary mb-6 flex-align-center-gap-2">
-                      <TrendingUp size={16} className="text-accent" />
-                      <span>{priorFailureWedge.title}</span>
-                    </h4>
-                    <p className="m-0 text-sm text-secondary">
-                      {priorFailureWedge.text}
-                    </p>
-                    {priorFailureWedge.reason && (
-                      <p className="m-0 text-xs text-muted italic mt-8">
-                        {priorFailureWedge.reason}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="reasoning-expandable mt-12">
-                    <button 
-                      className="btn-reasoning-toggle flex-align-center-gap-2 text-xs text-mono"
-                      onClick={() => toggleReasoning('pattern')}
-                    >
-                      <Eye size={12} />
-                      <span>{expandedReasoning['pattern'] ? 'Hide evidence chain' : 'View reasoning'}</span>
-                    </button>
-                    {expandedReasoning['pattern'] && (
-                      <div className="reasoning-details p-12 mt-8 text-xs text-secondary bg-results border-dark rounded-technical text-mono">
-                        Generated from lowest sections: {lowestSections.map(s => `${s.name} (${s.score}/10)`).join(', ')}.<br />
-                        Causal formula: {lowestSections[0]?.id} &rarr; {lowestSections[1]?.id}.<br />
-                        Prior failure wedge triggered by S5Q6.5 = "{answers.s5q6_5 || 'C'}".<br />
-                        Confidence Score: 0.95 (high convergence).
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <div className="pattern-container-relative">
-                  <div className="pattern-overlay">
-                    <div className="pattern-overlay-badge">
-                      <Lock size={14} />
-                      <span>Unlock with Email</span>
-                    </div>
-                  </div>
-                  <div className="pattern-callout pattern-blur-gate">
-                    <div className="pattern-title">
-                      <Sparkles size={16} />
-                      <span>Operational Root Cause</span>
-                    </div>
-                    <p className="pattern-text">
-                      Your two lowest sections - {lowestSections[0]?.name || 'Business Foundation'} and {lowestSections[1]?.name || 'Client & Project'} - are not separate failures. They are the same failure at different surfaces. Without documented services, creative scope drifts endlessly. The root is one gap: you lack a connected relational workspace where files, projects, tasks, and margins sync.
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Block 4: Blind Spots */}
-            <div className="mb-40">
-              <h2 className="text-sm uppercase tracking-wider text-muted mb-24">Critical Blind Spots</h2>
-
-              {emailSubmitted ? (
-                <div className="blind-spots-list animate-fade-in">
-                  {activeBlindSpots.length > 0 ? (
-                    activeBlindSpots.map((spot, idx) => (
-                      <div key={idx} className="blind-spot-card border-dark p-20 mb-16 rounded-technical bg-results card-shadow">
-                        <div className="flex-align-center-gap-2 mb-8">
-                          <ShieldAlert className="text-accent" size={20} />
-                          <h3 className="m-0 text-md font-semibold text-primary">{spot.title}</h3>
-                        </div>
-                        <p className="text-sm text-secondary mb-16">
-                          {spot.description}
-                        </p>
-
-                        {spot.showChart && (
-                          <div className="confidence-gap-chart mt-16 mb-16 p-16 border-light rounded-technical bg-accent-subtle">
-                            <div className="text-xs text-mono text-secondary mb-12">CONFIDENCE VS. INFRASTRUCTURE GAP:</div>
-                            <div className="flex-bar-chart">
-                              <div className="bar-group">
-                                <div className="bar-label text-xs">Self-Reported Confidence (S5Q2a):</div>
-                                <div className="bar-container-h">
-                                  <div className="bar-fill-h" style={{ width: `${(composites.crgmScore / 5) * 100}%` }}></div>
-                                  <span className="text-xs text-mono font-semibold">{(composites.crgmScore / 5 * 10).toFixed(0)}/10</span>
-                                </div>
-                              </div>
-                              <div className="bar-group mt-8">
-                                <div className="bar-label text-xs">S5 Infrastructure Score:</div>
-                                <div className="bar-container-h">
-                                  <div className="bar-fill-h bg-dark" style={{ width: `${(calculateSectionScore('client') / 10) * 100}%` }}></div>
-                                  <span className="text-xs text-mono font-semibold">{calculateSectionScore('client')}/10</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="text-xs text-muted mt-8 italic">
-                              The gap between these bars indicates how much you rely on personal cognitive effort rather than system infrastructure.
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="blind-spot-remedy p-12 border-light bg-accent-subtle rounded-technical mb-12">
-                          <span className="text-xs font-semibold text-accent uppercase tracking-wider block mb-4">Operational Remedy:</span>
-                          <span className="text-sm text-secondary">{spot.remedy}</span>
-                        </div>
-
-                        <div className="reasoning-expandable">
-                          <button 
-                            className="btn-reasoning-toggle flex-align-center-gap-2 text-xs text-mono"
-                            onClick={() => toggleReasoning(`spot_${idx}`)}
-                          >
-                            <Eye size={12} />
-                            <span>{expandedReasoning[`spot_${idx}`] ? 'Hide evidence chain' : 'View reasoning'}</span>
-                          </button>
-                          {expandedReasoning[`spot_${idx}`] && (
-                            <div className="reasoning-details p-12 mt-8 text-xs text-secondary bg-results border-dark rounded-technical text-mono">
-                              Triggered by: {spot.id === 'BLIND_SPOT_SOLO_HUBRIS' ? `S5Q2a = ${answers.s5q2a}/5 (high confidence) + S5Q1 = "${answers.s5q1}" (no connected record)` : `S2Q1 = "${answers.s2q1}" + OCI Total = ${composites.ociTotal}`}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="p-20 text-center border-light rounded-technical text-secondary bg-results">
-                      No significant blind spots detected. Your self-reports align with your infrastructure.
-                    </div>
-                  )}
-
-                  {contradictions.length > 0 && (
-                    <div className="contradictions-warning mt-24 p-16 border-accent border-light bg-accent-subtle rounded-technical">
-                      <h4 className="m-0 mb-6 text-primary flex-align-center-gap-2">
-                        <AlertCircle className="text-accent" size={16} />
-                        <span>Workspace Inconsistencies Detected ({contradictions.length})</span>
-                      </h4>
-                      <p className="text-xs text-secondary m-0 mb-12">
-                        Our Relational Intelligence Engine detected inconsistent signals across different sections. This usually means your practices vary by client or that you overestimate certain capabilities:
-                      </p>
-                      <ul className="m-0 pl-16 text-xs text-secondary flex-direction-column gap-6">
-                        {contradictions.map((c, idx) => (
-                          <li key={idx}>
-                            <strong>{c.title}:</strong> {c.description} <span className="text-muted">({c.evidence})</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="pattern-container-relative">
-                  <div className="pattern-overlay">
-                    <div className="pattern-overlay-badge">
-                      <Lock size={14} />
-                      <span>Unlock with Email</span>
-                    </div>
-                  </div>
-                  <div className="pattern-callout pattern-blur-gate">
-                    <div className="flex-align-center-gap-2 mb-8">
-                      <ShieldAlert className="text-accent" size={20} />
-                      <h3 className="m-0 text-md font-semibold text-primary">Solo Hubris (Confidence/Infrastructure Gap)</h3>
-                    </div>
-                    <p className="text-sm text-secondary">
-                      You indicated high confidence in status updates, but lack structured records. Your business relies on your personal working memory, creating a critical single point of failure when client count or scope increases.
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Block 5: Strengths & Inflection Points */}
-            <div className="mb-40">
-              <h2 className="text-sm uppercase tracking-wider text-muted mb-16">Operational Strengths</h2>
-              <div className="strength-card border-dark p-20 rounded-technical bg-results flex-align-center-gap-4">
-                <Zap className="text-accent" size={28} />
-                <div>
-                  <h3 className="m-0 text-md mb-6">{highestSection.name} ({highestSection.score}/10)</h3>
-                  <p className="m-0 text-sm text-secondary">
-                    This is your highest-scoring operational dimension. Because this infrastructure is already functioning, you should leverage it as your foundation for patching other areas rather than trying to build everything at once.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Block 6: Leverage Analysis */}
-            <div className="mb-40">
-              <h2 className="text-sm uppercase tracking-wider text-muted mb-16">Highest-Leverage Improvement</h2>
-              <div className="leverage-card border-accent border-light bg-accent-subtle p-20 rounded-technical">
-                <div className="leverage-badge uppercase text-xs font-semibold text-accent mb-6">Priority 1 Focus Area</div>
-                <h3 className="m-0 text-md mb-8">{leverageAnalysis.name}</h3>
-                <p className="text-sm text-secondary m-0 mb-12">
-                  Improving this section first will yield the largest cascade effect across your operations. Fixing <strong>{leverageAnalysis.name}</strong> will help close gaps in other areas (such as {leverageAnalysis.id === 'foundation' ? 'Client Management & Financial Visibility' : 'Productivity & Task Tracking'}) because those downstream areas depend directly on this foundation.
-                </p>
-                <div className="text-xs text-mono text-muted">
-                  LEVERAGE RATIO: {leverageAnalysis.leverageScore} (Headroom: {10 - leverageAnalysis.score} × Dependency Weight: {leverageAnalysis.weight})
-                </div>
-              </div>
-            </div>
-
-            {/* Block 7: Sequenced Recommendations */}
-            <div className="mb-40">
-              <h2 className="text-sm uppercase tracking-wider text-muted mb-24">Action Roadmap</h2>
-
-              {emailSubmitted ? (
-                <div className="recommendations-stack animate-fade-in">
-                  {recommendationsList.map((rec, idx) => (
-                    <div key={idx} className="recommendation-card border-dark p-24 mb-16 rounded-technical bg-results card-shadow">
-                      <div className="rec-priority-badge mb-12 text-xs text-mono">
-                        PRIORITY 0{rec.priority}
-                      </div>
-                      <h3 className="m-0 text-md mb-6 text-primary">{rec.title}</h3>
-                      <div className="text-xs text-muted uppercase tracking-wider mb-16">
-                        Addresses: {rec.addresses}
-                      </div>
-                      
-                      <div className="rec-evidence mb-12 text-xs text-secondary italic">
-                        <strong>Your answers revealed:</strong> {rec.revealed}
-                      </div>
-
-                      <div className="rec-why mb-16 text-sm text-secondary">
-                        <strong>Why this matters:</strong> {rec.why}
-                      </div>
-
-                      <div className="rec-action p-16 bg-accent-subtle border-light rounded-technical text-sm text-secondary">
-                        <strong className="text-accent uppercase text-xs tracking-wider block mb-4">What this looks like:</strong>
-                        {rec.action}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="pattern-container-relative">
-                  <div className="pattern-overlay">
-                    <div className="pattern-overlay-badge">
-                      <Lock size={14} />
-                      <span>Unlock with Email</span>
-                    </div>
-                  </div>
-                  <div className="recommendation-card pattern-blur-gate border-dark p-24 mb-16 rounded-technical bg-results">
-                    <div className="rec-priority-badge mb-12 text-xs text-mono">PRIORITY 01</div>
-                    <h3 className="m-0 text-md mb-6 text-primary">Build a Connected Client Project Hub</h3>
-                    <div className="text-sm text-secondary">
-                      Establish a relational client portal. Connect active deliverable lists, invoice statuses, call notes, and assets in one master Notion database so client info updates in real-time.
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Block 8: Future State & Cost Calculator */}
-            <div className="mb-40">
+              {/* Cost Calculator */}
               <h2 className="text-sm uppercase tracking-wider text-muted mb-24">Hidden Cost of Chaos Calculator</h2>
               
               <div className="calculator-card glass-panel p-24 bg-results border-dark rounded-technical mb-24">
@@ -2079,72 +1889,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* AI-Readiness display */}
-              <div className="ai-readiness-card border-dark p-20 rounded-technical bg-results mb-24">
-                <h3 className="m-0 text-md mb-6 flex-align-center-gap-2">
-                  <Zap className="text-accent" size={18} />
-                  <span>AI Readiness Score: {composites.aiReadiness}/10</span>
-                </h3>
-                <div className="breakdown-bar-track mb-12">
-                  <div 
-                    className="breakdown-bar-fill bg-accent"
-                    style={{ width: `${composites.aiReadiness * 10}%` }}
-                  ></div>
-                </div>
-                <p className="m-0 text-sm text-secondary">
-                  {composites.aiReadiness >= 7.0 
-                    ? 'Your operational data is structured enough to leverage AI tools immediately. You can feed your relational records into AI interfaces to analyze client metrics.' 
-                    : composites.aiReadiness >= 4.0 
-                    ? 'You have partial data structure. AI can analyze individual spreadsheets, but cannot automate client context because the data points do not share a common record.'
-                    : 'Your business is not AI-ready. AI cannot optimize what is not documented. Building a connected record is the prerequisite for AI delegation.'}
-                </p>
-              </div>
-
-              {/* Benchmarks standards display */}
-              <div className="benchmarks-section mb-24">
-                <h3 className="text-md font-semibold mb-12">Serious Operator Standards</h3>
-                {sections.map(section => (
-                  <div key={section.id} className="benchmark-card p-12 mb-8 border-light rounded-technical bg-results text-sm">
-                    <strong>{section.name}: </strong>
-                    <span className="text-secondary">
-                      {seriousOperatorBenchmarks[section.id] ? (
-                        profession && seriousOperatorBenchmarks[section.id][profession]
-                          ? seriousOperatorBenchmarks[section.id][profession]
-                          : seriousOperatorBenchmarks[section.id].general
-                      ) : ""}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Roadmap display */}
-              <div className="roadmap-timeline-card border-dark p-24 rounded-technical bg-results mb-32">
-                <h3 className="m-0 text-md mb-12">Operational Growth Roadmap</h3>
-                <div className="roadmap-phases flex-direction-column gap-16">
-                  <div className="roadmap-phase-item flex-align-center-gap-4">
-                    <div className="phase-num text-xs text-mono bg-dark text-white rounded-technical p-4">PHASE 1</div>
-                    <div>
-                      <h4 className="m-0 text-sm font-semibold">Standardize the Foundation</h4>
-                      <p className="m-0 text-xs text-secondary">Lock package scopes, qualifying questionnaires, and initial proposal templates (S1 & S4).</p>
-                    </div>
-                  </div>
-                  <div className="roadmap-phase-item flex-align-center-gap-4">
-                    <div className="phase-num text-xs text-mono bg-dark text-white rounded-technical p-4">PHASE 2</div>
-                    <div>
-                      <h4 className="m-0 text-sm font-semibold">Connect the Workspace</h4>
-                      <p className="m-0 text-xs text-secondary">Launch a unified client project record portal linking briefs, tasks, and deliverables (S5 & S2).</p>
-                    </div>
-                  </div>
-                  <div className="roadmap-phase-item flex-align-center-gap-4">
-                    <div className="phase-num text-xs text-mono bg-dark text-white rounded-technical p-4">PHASE 3</div>
-                    <div>
-                      <h4 className="m-0 text-sm font-semibold">Automate Margins</h4>
-                      <p className="m-0 text-xs text-secondary">Track per-project profitability logs, expense reserves, and 30-day pipelines (S6 & S3).</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               {/* Soft Offer CTA */}
               <div className="offer-section mt-40">
                 <div className="offer-card glass-panel p-32 text-center rounded-technical">
@@ -2209,7 +1953,7 @@ export default function App() {
             </div>
             <hr className="success-modal-divider" />
             <p className="success-modal-text" style={{ marginBottom: '16px', fontWeight: '500' }}>
-              Your customized operational blueprint has been sent to your inbox.
+              Your customized operational blueprint has<br />been sent to your inbox.
             </p>
             <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', margin: '0 0 20px 0', fontWeight: '500' }}>
               Please check your inbox shortly.
@@ -2221,7 +1965,7 @@ export default function App() {
               className="btn-primary" 
               onClick={() => setShowSuccessPopup(false)}
             >
-              View My Scorecard
+              View My Report
             </button>
           </div>
         </div>
