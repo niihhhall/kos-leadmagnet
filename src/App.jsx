@@ -133,6 +133,7 @@ export default function App() {
   const [email, setEmail] = useState(() => localStorage.getItem('kos_email') || '');
   const [emailSubmitted, setEmailSubmitted] = useState(() => localStorage.getItem('kos_emailSubmitted') === 'true');
   const [isSubmittingEmail, setIsSubmittingEmail] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
   const [emailFormFocus, setEmailFormFocus] = useState(false);
   const [emailError, setEmailError] = useState('');
 
@@ -911,51 +912,65 @@ export default function App() {
       hasLastName: Boolean(lastName.trim()),
     });
 
-    try {
-      const workerUrl = import.meta.env.VITE_CF_WORKER_URL || 'http://localhost:8787';
-      const response = await fetch(`${workerUrl}/generate-report`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          firstName: firstName.trim(),
-          lastName: lastName.trim() || '',
-          email: email.trim(),
-          profession,
-          clientCount,
-          score: calculateTotalScore(),
-          sectionScores: {
-            foundation:   calculateSectionScore('foundation'),
-            productivity: calculateSectionScore('productivity'),
-            content:      calculateSectionScore('content'),
-            marketing:    calculateSectionScore('marketing'),
-            client:       calculateSectionScore('client'),
-            finance:      calculateSectionScore('finance'),
-          },
-          answers,
-        }),
+    // ── Fire-and-forget: navigate immediately, report arrives by email ──────
+    const workerUrl = import.meta.env.VITE_CF_WORKER_URL || 'http://localhost:8787';
+    fetch(`${workerUrl}/generate-report`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        firstName: firstName.trim(),
+        lastName: lastName.trim() || '',
+        email: email.trim(),
+        profession,
+        clientCount,
+        score: calculateTotalScore(),
+        sectionScores: {
+          foundation:   calculateSectionScore('foundation'),
+          productivity: calculateSectionScore('productivity'),
+          content:      calculateSectionScore('content'),
+          marketing:    calculateSectionScore('marketing'),
+          client:       calculateSectionScore('client'),
+          finance:      calculateSectionScore('finance'),
+        },
+        answers,
+      }),
+    })
+    .then((res) => res.ok ? res.json() : null)
+    .then((report) => {
+      if (report) {
+        setGeneratedReport(report);
+        posthog.capture('report_generated', {
+          riskLevel: report.riskLevel,
+          diagnosisLabel: report.primaryDiagnosis?.label,
+        });
+      }
+    })
+    .catch((err) => console.error('Background report generation failed:', err));
+
+    // ── Authentic 12-second loading sequence ──────────────────────────────────
+    const messages = [
+      'Analyzing your responses...',
+      'Building your operational report...',
+      'Calculating your risk score...',
+      'Preparing your PDF...',
+    ];
+    setLoadingMessage(messages[0]);
+    const intervalId = setInterval(() => {
+      setLoadingMessage(prev => {
+        const idx = messages.indexOf(prev);
+        return messages[Math.min(idx + 1, messages.length - 1)];
       });
+    }, 3000);
 
-      if (!response.ok) throw new Error(`Worker error: ${response.status}`);
+    await new Promise(resolve => setTimeout(resolve, 12000));
+    clearInterval(intervalId);
 
-      const report = await response.json();
-      setGeneratedReport(report);
-      setEmailSubmitted(true);
-      setStage('results');
-      setShowSuccessPopup(true);
-
-      posthog.capture('report_generated', {
-        riskLevel: report.riskLevel,
-        diagnosisLabel: report.primaryDiagnosis?.label,
-      });
-
-    } catch (err) {
-      console.error('Failed to generate report:', err);
-      // Graceful fallback — still show results without LLM report
-      setEmailSubmitted(true);
-      setStage('results');
-    } finally {
-      setIsSubmittingEmail(false);
-    }
+    // Navigate after delay
+    setEmailSubmitted(true);
+    setIsSubmittingEmail(false);
+    setLoadingMessage('');
+    setStage('results');
+    setShowSuccessPopup(true);
   };
 
   const handleSkipEmail = () => {
@@ -1597,7 +1612,7 @@ export default function App() {
                           {isSubmittingEmail ? (
                             <>
                               <RefreshCw className="animate-spin" size={18} />
-                              <span>Generating...</span>
+                              <span style={{ fontSize: '0.82rem' }}>{loadingMessage || 'Analyzing...'}</span>
                             </>
                           ) : (
                             <>
@@ -1671,39 +1686,10 @@ export default function App() {
               </p>
             </div>
 
-            {!emailSubmitted && (
-              <div className="card lock-banner">
-                <div className="lock-banner-content">
-                  <Lock className="lock-icon text-accent" size={24} />
-                  <div>
-                    <h3 className="m-0 mb-12 text-primary">Unlock Your Custom Root Cause Analysis</h3>
-                    <p className="text-sm m-0 mb-24">
-                      Enter your email to unlock your full section breakdown, contradiction indices, blind spot analysis, and sequenced recommendations.
-                    </p>
-                    <form onSubmit={handleEmailSubmit} className="lock-banner-form">
-                      <input 
-                        type="email" 
-                        placeholder="your@email.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="email-input lock-input"
-                        required
-                      />
-                      <button 
-                        type="submit" 
-                        className="btn-primary lock-btn"
-                        disabled={isSubmittingEmail}
-                      >
-                        Unlock Now
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* lock-banner hidden */}
 
             {/* Block 1: Score Context & Executive Summary */}
-            <div className="mb-40">
+            <div className="mb-40" style={{ position: 'relative' }}>
               <div className="section-header-brutalist">
                 <span className="section-label-badge">01 // Diagnosis</span>
                 <h2 className="section-title-large">Operational Diagnosis</h2>
@@ -1712,44 +1698,96 @@ export default function App() {
                 {getScoreBand(calculateTotalScore()).description}
               </p>
               
-              <div className="exec-assessment-container">
-                <div className="exec-header-bar">
-                  <div className="exec-header-title">
-                    <Sparkles className="exec-header-icon" size={14} />
-                    <span>Executive Assessment</span>
+              <div style={{ position: 'relative' }}>
+                <div
+                  className="exec-assessment-container"
+                  style={!emailSubmitted ? { filter: 'blur(6px)', userSelect: 'none', pointerEvents: 'none' } : {}}
+                >
+                  <div className="exec-header-bar">
+                    <div className="exec-header-title">
+                      <Sparkles className="exec-header-icon" size={14} />
+                      <span>Executive Assessment</span>
+                    </div>
+                    <span className="text-mono text-xxs text-muted" style={{ fontSize: '10px' }}>ANALYSIS ID: KOS-DIAG-01</span>
                   </div>
-                  <span className="text-mono text-xxs text-muted" style={{ fontSize: '10px' }}>ANALYSIS ID: KOS-DIAG-01</span>
+
+                  <div className="exec-meta-grid">
+                    <div className="exec-meta-item">
+                      <span className="exec-meta-label">Segment / Role</span>
+                      <span className="exec-meta-val">Freelance {profession ? profession.charAt(0).toUpperCase() + profession.slice(1) : 'Professional'}</span>
+                    </div>
+                    <div className="exec-meta-item">
+                      <span className="exec-meta-label">Scale (Clients)</span>
+                      <span className="exec-meta-val">{clientCount || 'N/A'} Active</span>
+                    </div>
+                    <div className="exec-meta-item">
+                      <span className="exec-meta-label">Workspace Index</span>
+                      <span className="exec-meta-val text-mono" style={{ color: composites.crgmScore >= 4 && answers.s5q1 !== 'C' ? 'var(--color-accent)' : '#10b981' }}>
+                        {composites.crgmScore >= 4 && answers.s5q1 !== 'C' ? 'LOW' : 'ALIGNED'}
+                      </span>
+                    </div>
+                    <div className="exec-meta-item">
+                      <span className="exec-meta-label">SPOF Risk Level</span>
+                      <span className="exec-meta-val text-mono" style={{ color: composites.riskScore >= 7 ? '#ef4444' : composites.riskScore >= 4 ? 'var(--color-accent)' : '#10b981' }}>
+                        {composites.riskScore >= 7 ? 'HIGH' : (composites.riskScore >= 4 ? 'MODERATE' : 'LOW')}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="exec-narrative-box">
+                    <p>
+                      <span className="exec-prompt-char">&gt;</span>
+                      Based on your answers, your lowest performance centers in <strong>{lowestSections.map(s => s.name).join(' & ')}</strong>. This indicates your business is facing a capacity or trackability bottleneck where your admin overhead locks you in a capacity ceiling.
+                    </p>
+                  </div>
                 </div>
 
-                <div className="exec-meta-grid">
-                  <div className="exec-meta-item">
-                    <span className="exec-meta-label">Segment / Role</span>
-                    <span className="exec-meta-val">Freelance {profession ? profession.charAt(0).toUpperCase() + profession.slice(1) : 'Professional'}</span>
+                {!emailSubmitted && (
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '12px',
+                    zIndex: 10,
+                    borderRadius: '8px',
+                    background: 'rgba(18, 18, 18, 0.55)',
+                    backdropFilter: 'blur(2px)',
+                  }}>
+                    <div style={{
+                      width: '52px',
+                      height: '52px',
+                      borderRadius: '50%',
+                      background: 'var(--color-accent)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: '0 0 0 8px rgba(255, 107, 0, 0.18)',
+                    }}>
+                      <Lock size={24} color="#fff" />
+                    </div>
+                    <p style={{ margin: 0, fontWeight: 600, fontSize: '0.92rem', color: '#fff', textAlign: 'center', lineHeight: 1.5 }}>
+                      <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Enter your email to unlock your full</span>
+                      <span style={{ fontWeight: 800, fontSize: '1rem', color: '#fff' }}>Operational Diagnosis</span>
+                    </p>
+                    <form onSubmit={handleEmailSubmit} style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                      <input
+                        type="email"
+                        placeholder="your@email.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="email-input lock-input"
+                        required
+                        style={{ minWidth: '180px' }}
+                      />
+                      <button type="submit" className="btn-primary lock-btn" disabled={isSubmittingEmail}>
+                        Unlock Now
+                      </button>
+                    </form>
                   </div>
-                  <div className="exec-meta-item">
-                    <span className="exec-meta-label">Scale (Clients)</span>
-                    <span className="exec-meta-val">{clientCount || 'N/A'} Active</span>
-                  </div>
-                  <div className="exec-meta-item">
-                    <span className="exec-meta-label">Workspace Index</span>
-                    <span className="exec-meta-val text-mono" style={{ color: composites.crgmScore >= 4 && answers.s5q1 !== 'C' ? 'var(--color-accent)' : '#10b981' }}>
-                      {composites.crgmScore >= 4 && answers.s5q1 !== 'C' ? 'LOW' : 'ALIGNED'}
-                    </span>
-                  </div>
-                  <div className="exec-meta-item">
-                    <span className="exec-meta-label">SPOF Risk Level</span>
-                    <span className="exec-meta-val text-mono" style={{ color: composites.riskScore >= 7 ? '#ef4444' : composites.riskScore >= 4 ? 'var(--color-accent)' : '#10b981' }}>
-                      {composites.riskScore >= 7 ? 'HIGH' : (composites.riskScore >= 4 ? 'MODERATE' : 'LOW')}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="exec-narrative-box">
-                  <p>
-                    <span className="exec-prompt-char">&gt;</span>
-                    Based on your answers, your lowest performance centers in <strong>{lowestSections.map(s => s.name).join(' & ')}</strong>. This indicates your business is facing a capacity or trackability bottleneck where your admin overhead locks you in a capacity ceiling.
-                  </p>
-                </div>
+                )}
               </div>
             </div>
 
@@ -1788,26 +1826,63 @@ export default function App() {
                 );
               })}
 
-              <div className="oci-redesigned-card mt-32">
-                <div className="oci-score-block">
-                  <span className="oci-score-num">{composites.ociTotal}</span>
-                  <span className="oci-score-denom">/12</span>
-                </div>
-                <div className="oci-content-block">
-                  <h4 className="oci-card-title">Operational Component Inventory (OCI)</h4>
-                  <p className="oci-card-desc mb-12">
-                    You have verified that <strong>{composites.ociTotal} of 12</strong> key relational documents/trackers currently exist in one connected location in your business.
-                  </p>
-                  <div className="oci-visual-grid">
-                    {Array.from({ length: 12 }).map((_, i) => (
-                      <div 
-                        key={i} 
-                        className={`oci-block-dot ${i < composites.ociTotal ? 'active' : 'inactive'}`}
-                        title={i < composites.ociTotal ? 'Active inventory item' : 'Missing inventory item'}
-                      />
-                    ))}
+              <div className="oci-redesigned-card mt-32" style={{ position: 'relative' }}>
+                <div
+                  style={!emailSubmitted ? { filter: 'blur(6px)', userSelect: 'none', pointerEvents: 'none', display: 'flex', flex: 1, gap: 'inherit', alignItems: 'inherit', flexWrap: 'wrap' } : { display: 'flex', flex: 1, gap: 'inherit', alignItems: 'inherit', flexWrap: 'wrap' }}
+                >
+                  <div className="oci-score-block">
+                    <span className="oci-score-num">{composites.ociTotal}</span>
+                    <span className="oci-score-denom">/12</span>
+                  </div>
+                  <div className="oci-content-block">
+                    <h4 className="oci-card-title">Operational Component Inventory (OCI)</h4>
+                    <p className="oci-card-desc mb-12">
+                      You have verified that <strong>{composites.ociTotal} of 12</strong> key relational documents/trackers currently exist in one connected location in your business.
+                    </p>
+                    <div className="oci-visual-grid">
+                      {Array.from({ length: 12 }).map((_, i) => (
+                        <div 
+                          key={i} 
+                          className={`oci-block-dot ${i < composites.ociTotal ? 'active' : 'inactive'}`}
+                          title={i < composites.ociTotal ? 'Active inventory item' : 'Missing inventory item'}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
+
+                {!emailSubmitted && (
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    zIndex: 10,
+                    borderRadius: '8px',
+                    background: 'rgba(18, 18, 18, 0.60)',
+                    backdropFilter: 'blur(2px)',
+                  }}>
+                    <div style={{
+                      width: '44px',
+                      height: '44px',
+                      borderRadius: '50%',
+                      background: 'var(--color-accent)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: '0 0 0 7px rgba(255, 107, 0, 0.18)',
+                    }}>
+                      <Lock size={20} color="#fff" />
+                    </div>
+                    <p style={{ margin: 0, fontWeight: 600, fontSize: '0.85rem', color: '#fff', textAlign: 'center', lineHeight: 1.5 }}>
+                      <span style={{ display: 'block', fontWeight: 800, fontSize: '1rem', whiteSpace: 'nowrap' }}>Unlock your OCI</span>
+                      <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Enter your email above</span>
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 

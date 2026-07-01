@@ -356,6 +356,20 @@ const mainHandler = {
       }
     }
 
+    // Diagnostic endpoint to inspect environment keys configuration
+    if (request.method === 'GET' && url.pathname === '/env-check') {
+      return new Response(JSON.stringify({
+        SUPABASE_SERVICE_ROLE_KEY: Boolean(env.SUPABASE_SERVICE_ROLE_KEY),
+        RESEND_API_KEY: Boolean(env.RESEND_API_KEY),
+        RESEND_SENDER_EMAIL: env.RESEND_SENDER_EMAIL || null,
+        FIREWORKS_API_KEY: Boolean(env.FIREWORKS_API_KEY),
+        ALLOWED_ORIGIN: env.ALLOWED_ORIGIN || null,
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     if (request.method !== 'POST') {
       return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
     }
@@ -447,10 +461,25 @@ const mainHandler = {
         answers: answers || {},
       },
     });
+
+    // Directly trigger the lead processing pipeline (database save, PDF generation, email send) 
+    // inside the Cloudflare Worker execution context to bypass external Inngest queue dependency.
+    const directPipeline = processLeadPipeline(env, {
+      firstName,
+      lastName,
+      email,
+      profession,
+      clientCount,
+      score,
+      sectionScores,
+      reportData,
+    }).catch((err) => console.error('[Direct Pipeline] Failed to process lead:', err.message));
+
     if (ctx && typeof ctx.waitUntil === 'function') {
-      ctx.waitUntil(inngestSend);
+      ctx.waitUntil(Promise.all([inngestSend, directPipeline]));
     } else {
       inngestSend.catch((err) => console.error('[Inngest] send failed:', err.message));
+      directPipeline.catch(() => {});
     }
 
     // ── Return Report JSON to Browser ──────────────────────────────────────

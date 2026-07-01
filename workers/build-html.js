@@ -1101,13 +1101,13 @@ export function buildReportHtml({ firstName, lastName, email, profession, score,
     .recs-stack {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-bottom: 20px;
+      gap: 8px;
+      margin-bottom: 12px;
     }
     .recommendation-card {
       background: #FFFFFF;
       border: 2px solid #292929;
-      padding: 14px 18px;
+      padding: 10px 14px;
       border-radius: 2px;
       box-shadow: 2px 2px 0px 0px #292929;
     }
@@ -1170,10 +1170,10 @@ export function buildReportHtml({ firstName, lastName, email, profession, score,
     .ai-readiness-box {
       border: 2px solid #292929;
       background: #FFFFFF;
-      padding: 12px 16px;
+      padding: 10px 14px;
       border-radius: 2px;
       box-shadow: 2px 2px 0px 0px #292929;
-      margin-bottom: 20px;
+      margin-bottom: 12px;
     }
     .ai-readiness-header {
       display: flex;
@@ -1228,12 +1228,12 @@ export function buildReportHtml({ firstName, lastName, email, profession, score,
       box-shadow: 2px 2px 0px 0px #292929;
     }
     .benchmark-card-item {
-      font-size: 8.8px;
-      line-height: 1.45;
+      font-size: 8px;
+      line-height: 1.35;
       color: #4A4A4A;
       border-bottom: 1px dashed rgba(41, 41, 41, 0.1);
-      padding-bottom: 6px;
-      margin-bottom: 4px;
+      padding-bottom: 4px;
+      margin-bottom: 3px;
     }
     .benchmark-card-item:last-child {
       border-bottom: none;
@@ -1252,7 +1252,7 @@ export function buildReportHtml({ firstName, lastName, email, profession, score,
     .roadmap-phases-stack {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
     }
     .roadmap-phase-row {
       display: flex;
@@ -1498,7 +1498,7 @@ export function buildReportHtml({ firstName, lastName, email, profession, score,
 
     <!-- Standards, Growth Phase and Footer -->
     <div>
-      <div class="bottom-split-row" style="margin-bottom: 20px;">
+      <div class="bottom-split-row" style="margin-bottom: 16px;">
         <div class="bottom-split-col-left">
           <div class="section-heading-muted" style="margin-bottom: 8px;">Serious Operator Standards</div>
           <div class="benchmarks-grid">
